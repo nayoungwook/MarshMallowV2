@@ -1,7 +1,8 @@
 package com.coconut.test;
 
-import com.coconut.Sprite;
 import com.coconut.marshmallow.Window;
+import com.coconut.marshmallow.object.GameObject;
+import com.coconut.marshmallow.sprite.Sprite;
 import com.coconut.marshmallow.state.MSScene;
 import com.coconut.marshmallow.state.SceneManager;
 
@@ -20,18 +21,22 @@ public class Main {
 class Workspace implements MSScene {
 
 	private Sprite sprite = null;
+	private GameObject object = null;
 
 	@Override
 	public void init() {
-		sprite = new Sprite("res/img/bigPinkCookie.png");
+		sprite = new Sprite("res/img/bigPinkCookie.png", 0, 0, 700, 900);
+		object = new GameObject(0, 0, 50, 50);
+		object.sprite = sprite;
 	}
 
 	@Override
 	public void update() {
+		object.rotation += 0.04f;
 	}
 
 	@Override
 	public void render() {
-		sprite.render();
+		object.render();
 	}
 }

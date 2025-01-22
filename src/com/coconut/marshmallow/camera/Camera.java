@@ -3,11 +3,11 @@ package com.coconut.marshmallow.camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import com.coconut.marshmallow.math.MSVector;
+import com.coconut.marshmallow.math.Vector;
 
 public class Camera {
 	private Matrix4f projectionMatrix, viewMatrix;
-	public MSVector position;
+	public Vector position;
 
 	private static Camera instance;
 
@@ -23,7 +23,7 @@ public class Camera {
 	}
 
 	public Camera() {
-		position = new MSVector(0f, 0f);
+		position = new Vector(0f, 0f);
 		projectionMatrix = new org.joml.Matrix4f();
 		viewMatrix = new org.joml.Matrix4f();
 		adjustProjection();

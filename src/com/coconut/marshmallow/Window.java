@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 import com.coconut.marshmallow.camera.Camera;
+import com.coconut.marshmallow.shader.Shader;
 import com.coconut.marshmallow.state.MSScene;
 import com.coconut.marshmallow.state.SceneManager;
 
@@ -30,8 +31,7 @@ public class Window {
 		Camera.updateScreenSize(width, height);
 	}
 
-	public void inintializeOpenGL() {
-		// Setup an error callback
+	public void inintializeOpenGL() { // Setup an error callback
 		GLFWErrorCallback.createPrint(System.err).set();
 
 		// Initialize GLFW
@@ -67,8 +67,6 @@ public class Window {
 		GL.createCapabilities();
 	}
 
-	private Shader shader;
-
 	public void init() {
 		shader = new Shader("res/shader/vertex.glsl", "res/shader/fragment.glsl");
 	}
@@ -91,6 +89,8 @@ public class Window {
 	 * renderObjects.size(); i++) { renderObjects.get(i).engineRender(g); }
 	 * objectCount = renderObjects.size(); }
 	 */
+
+	public static Shader shader;
 
 	public void render() {
 		GL30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
