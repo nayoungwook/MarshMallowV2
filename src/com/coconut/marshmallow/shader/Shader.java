@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -20,6 +21,8 @@ public class Shader {
 	private String fragmentShaderSrc;
 
 	private int vertexID, fragmentID, shaderProgram;
+
+	private int shaderProgramBackup;
 
 	private String vertexPath, fragmentPath;
 
@@ -46,6 +49,7 @@ public class Shader {
 	}
 
 	public void bind() {
+		this.shaderProgramBackup = this.shaderProgram;
 		GL30.glUseProgram(shaderProgram);
 	}
 
@@ -83,18 +87,31 @@ public class Shader {
 		}
 	}
 
+	public HashMap<String, Integer> uniformLocations = new HashMap<>();
+	private static final FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
+
 	public void uploadMat4f(String varName, Matrix4f mat4) {
-		int varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
-		bind();
-		FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
+		int varLocation = 0;
+
+		if (uniformLocations.containsKey(varName))
+			varLocation = uniformLocations.get(varName);
+		else {
+			varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, varLocation);
+		}
+
+		if (shaderProgramBackup != shaderProgram)
+			bind();
 		mat4.get(matBuffer);
 		GL30.glUniformMatrix4fv(varLocation, false, matBuffer);
 	}
 
 	public void uploadMat3f(String varName, Matrix3f mat3) {
 		int varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
-		bind();
-		FloatBuffer matBuffer = BufferUtils.createFloatBuffer(9);
+
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+
 		mat3.get(matBuffer);
 		GL30.glUniformMatrix3fv(varLocation, false, matBuffer);
 	}

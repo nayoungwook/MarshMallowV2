@@ -9,6 +9,8 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 import com.coconut.marshmallow.camera.Camera;
+import com.coconut.marshmallow.input.KeyListener;
+import com.coconut.marshmallow.input.MouseListener;
 import com.coconut.marshmallow.shader.Shader;
 import com.coconut.marshmallow.state.MSScene;
 import com.coconut.marshmallow.state.SceneManager;
@@ -20,10 +22,16 @@ public class Window {
 
 	private long glfwWindow;
 
+	private KeyListener keyListener;
+	private MouseListener mouseListener;
+
 	public Window(String title, int width, int height) {
 		this.title = title;
 		this.width = width;
 		this.height = height;
+
+		this.keyListener = new KeyListener();
+		this.mouseListener = new MouseListener();
 
 		inintializeOpenGL();
 		init();
@@ -34,37 +42,37 @@ public class Window {
 	public void inintializeOpenGL() { // Setup an error callback
 		GLFWErrorCallback.createPrint(System.err).set();
 
-		// Initialize GLFW
 		if (!GLFW.glfwInit()) {
 			throw new IllegalStateException("Unable to initialize GLFW.");
 		}
 
-		// Configure GLFW
 		GLFW.glfwDefaultWindowHints();
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
 		GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_FALSE);
 
-		// Create the window
 		glfwWindow = GLFW.glfwCreateWindow(this.width, this.height, this.title, MemoryUtil.NULL, MemoryUtil.NULL);
 		if (glfwWindow == MemoryUtil.NULL) {
 			throw new IllegalStateException("Failed to create the GLFW window.");
 		}
 
-		// Make the OpenGL context current
 		GLFW.glfwMakeContextCurrent(glfwWindow);
-		// Enable v-sync
 		GLFW.glfwSwapInterval(1);
 
-		// Make the window visible
 		GLFW.glfwShowWindow(glfwWindow);
 
-		// This line is critical for LWJGL's interoperation with GLFW's
-		// OpenGL context, or any context that is managed externally.
-		// LWJGL detects the context that is current in the current thread,
-		// creates the GLCapabilities instance and makes the OpenGL
-		// bindings available for use.
+		GLFW.glfwSetKeyCallback(glfwWindow, keyListener.getKeyboardCallback());
+		GLFW.glfwSetCursorPosCallback(glfwWindow, mouseListener.getMouseMoveCallback());
+		GLFW.glfwSetMouseButtonCallback(glfwWindow, mouseListener.getMouseButtonsCallback());
+
 		GL.createCapabilities();
+
+		GL30.glEnableVertexAttribArray(0);
+		GL30.glEnableVertexAttribArray(1);
+		GL30.glEnableVertexAttribArray(2);
+
+		GL13.glEnable(GL13.GL_BLEND);
+		GL30.glBlendFuncSeparate(GL13.GL_SRC_ALPHA, GL13.GL_ONE_MINUS_SRC_ALPHA, GL13.GL_ONE, GL13.GL_ONE);
 	}
 
 	public void init() {
@@ -72,23 +80,14 @@ public class Window {
 	}
 
 	public void update() {
-		GLFW.glfwPollEvents();
 		Camera.updateScreenSize(width, height);
-		Camera.getInstance().position.translate(0, 0, 10);
+
+		GLFW.glfwPollEvents();
 
 		MSScene scene = SceneManager.getScene();
 		if (scene != null)
 			scene.update();
 	}
-
-	/*
-	 * public static ArrayList<MSObject> renderObjects = new ArrayList<>(); public
-	 * static int objectCount = 0;
-	 * 
-	 * private void renderImage(Graphics2D g) { for (int i = 0; i <
-	 * renderObjects.size(); i++) { renderObjects.get(i).engineRender(g); }
-	 * objectCount = renderObjects.size(); }
-	 */
 
 	public static Shader shader;
 
@@ -100,7 +99,7 @@ public class Window {
 		shader.uploadMat4f("uProjection", Camera.getInstance().getProjectionMatrix());
 		shader.uploadMat4f("uView", Camera.getInstance().getViewMatrix());
 		shader.uploadTexture("TEX_SAMPLER", 0);
-
+		
 		MSScene scene = SceneManager.getScene();
 		if (scene != null)
 			scene.render();
@@ -136,7 +135,7 @@ public class Window {
 			}
 
 			if (System.currentTimeMillis() - timer > 1000) {
-				// System.out.println(String.format("UPS : %s, FPS : %s", ticks, frames));
+				System.out.println(String.format("UPS : %s, FPS : %s", ticks, frames));
 				frames = 0;
 				ticks = 0;
 				timer += 1000;

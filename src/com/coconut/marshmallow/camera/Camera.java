@@ -8,6 +8,7 @@ import com.coconut.marshmallow.math.Vector;
 public class Camera {
 	private Matrix4f projectionMatrix, viewMatrix;
 	public Vector position;
+	public float rotation = 0f;
 
 	private static Camera instance;
 
@@ -46,6 +47,9 @@ public class Camera {
 		Vector3f cameraFront = new Vector3f(0.0f, 0.0f, -1.0f);
 		Vector3f cameraUp = new Vector3f(0.0f, 1.0f, 0.0f);
 		this.viewMatrix.identity();
+
+		cameraUp.rotateAxis(rotation, 0f, 0f, 1f);
+
 		viewMatrix.lookAt(new Vector3f(position.getX(), position.getY(), 20.0f),
 				cameraFront.add(position.getX(), position.getY(), 0.0f), cameraUp);
 

@@ -1,32 +1,32 @@
 package com.coconut.marshmallow.input;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWKeyCallback;
 
 public class KeyListener {
-	private static KeyListener instance;
-	private boolean keyPressed[] = new boolean[350];
+	private static boolean[] keys = new boolean[GLFW.GLFW_KEY_LAST];
 
-	private KeyListener() {
+	private GLFWKeyCallback keyboard;
 
+	public KeyListener() {
+		keyboard = new GLFWKeyCallback() {
+			@Override
+			public void invoke(long window, int key, int scancode, int action, int mods) {
+				keys[key] = (action != GLFW.GLFW_RELEASE);
+			}
+		};
 	}
 
-	public static KeyListener get() {
-		if (KeyListener.instance == null) {
-			KeyListener.instance = new KeyListener();
-		}
-
-		return KeyListener.instance;
+	public static boolean isKeyDown(int key) {
+		return keys[key];
 	}
 
-	public static void keyCallback(long window, int key, int scancode, int action, int mods) {
-		if (action == GLFW.GLFW_PRESS) {
-			get().keyPressed[key] = true;
-		} else if (action == GLFW.GLFW_RELEASE) {
-			get().keyPressed[key] = false;
-		}
+	public void destroy() {
+		keyboard.free();
 	}
 
-	public static boolean isKeyPressed(int keyCode) {
-		return get().keyPressed[keyCode];
+	public GLFWKeyCallback getKeyboardCallback() {
+		return keyboard;
 	}
+
 }
