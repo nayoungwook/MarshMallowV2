@@ -25,15 +25,22 @@ public class Main {
 
 class Workspace implements MSScene {
 
-	private Sprite sprite = null;
+	private ArrayList<Sprite> sprites = new ArrayList<>();
 	private ArrayList<GameObject> objects = new ArrayList<>();
 
 	@Override
 	public void init() {
-		sprite = new Sprite("res/img/RabbitIdle.png", 0, 0, 25, 25);
-		GameObject obj = new GameObject(0, 0, 100, 100);
-		obj.sprite = sprite;
-		objects.add(obj);
+		sprites.add(new Sprite("res/img/aru.png"));
+
+		int w = 100, h = 100, s = 100;
+
+		for (int j = 0; j < h; j++) {
+			for (int i = 0; i < w; i++) {
+				GameObject obj = new GameObject((-w / 2 + i) * s, (-h / 2 + j) * s, s, s);
+				obj.sprite = sprites.get(0);
+				objects.add(obj);
+			}
+		}
 	}
 
 	@Override
@@ -46,7 +53,6 @@ class Workspace implements MSScene {
 			Camera.getInstance().position.translate(-4, 0);
 		if (KeyListener.isKeyDown(KeyEvent.VK_D))
 			Camera.getInstance().position.translate(4, 0);
-
 	}
 
 	@Override

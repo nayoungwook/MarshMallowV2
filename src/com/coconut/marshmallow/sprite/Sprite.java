@@ -38,16 +38,11 @@ public class Sprite {
 	private void initializeGlSettings() {
 		GL30.glPixelStorei(GL30.GL_UNPACK_ALIGNMENT, 1);
 
-		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_LINEAR);
-		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_LINEAR);
-
 		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_S, GL30.GL_REPEAT);
 		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_T, GL30.GL_REPEAT);
 
-		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_S, GL30.GL_REPEAT);
-		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_T, GL30.GL_REPEAT);
-		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST);
-		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST);
+		GL13.glTexParameteri(GL13.GL_TEXTURE_2D, GL13.GL_TEXTURE_MAG_FILTER, GL13.GL_LINEAR);
+		GL13.glTexParameteri(GL13.GL_TEXTURE_2D, GL13.GL_TEXTURE_MIN_FILTER, GL13.GL_LINEAR);
 	}
 
 	private void bindImage(String path) {
@@ -86,6 +81,8 @@ public class Sprite {
 
 		bindImage(path);
 
+		subXOffset /= originalWidth;
+		subYOffset /= originalHeight;
 		this.subXOffset = subXOffset;
 		this.subYOffset = subYOffset;
 		subWOffset /= originalWidth;
@@ -95,11 +92,10 @@ public class Sprite {
 
 		vertexArray = new float[] {
 				// position // color // UV Coordinates
-				50f, -50f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
-																											// right 0
-				-50f, 50f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, subXOffset, subYOffset, // Top left 1
-				50f, 50f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, subXOffset + subWOffset, subYOffset, // Top right 2
-				-50f, -50f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
+				50f, -50f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
+				-50f, 50f, 0.0f, subXOffset, subYOffset, // Top left 1
+				50f, 50f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
+				-50f, -50f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
 		};
 
 		uploadAttribPointers();
@@ -111,12 +107,12 @@ public class Sprite {
 	public Sprite(String path) {
 
 		vertexArray = new float[] {
-				// position // color // UV Coordinates
-				50f, -50f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
-																											// right 0
-				-50f, 50f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, subXOffset, subYOffset, // Top left 1
-				50f, 50f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, subXOffset + subWOffset, subYOffset, // Top right 2
-				-50f, -50f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
+				// position // UV Coordinates
+				50f, -50f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
+																					// right 0
+				-50f, 50f, 0.0f, subXOffset, subYOffset, // Top left 1
+				50f, 50f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
+				-50f, -50f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
 		};
 
 		initialize();
@@ -127,17 +123,13 @@ public class Sprite {
 	private void uploadAttribPointers() {
 		// Add the vertex attribute pointers
 		int positionsSize = 3;
-		int colorSize = 4;
 		int uvSize = 2;
-		int vertexSizeBytes = (positionsSize + colorSize + uvSize) * 4;
+		int vertexSizeBytes = (positionsSize + uvSize) * 4;
 		GL30.glVertexAttribPointer(0, positionsSize, GL30.GL_FLOAT, false, vertexSizeBytes, 0);
 		GL30.glEnableVertexAttribArray(0);
 
-		GL30.glVertexAttribPointer(1, colorSize, GL30.GL_FLOAT, false, vertexSizeBytes, positionsSize * 4);
+		GL30.glVertexAttribPointer(1, uvSize, GL30.GL_FLOAT, false, vertexSizeBytes, positionsSize * 4);
 		GL30.glEnableVertexAttribArray(1);
-
-		GL30.glVertexAttribPointer(2, uvSize, GL30.GL_FLOAT, false, vertexSizeBytes, (positionsSize + colorSize) * 4);
-		GL30.glEnableVertexAttribArray(2);
 	}
 
 	private void initialize() {

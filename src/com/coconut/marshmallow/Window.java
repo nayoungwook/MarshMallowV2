@@ -69,7 +69,6 @@ public class Window {
 
 		GL30.glEnableVertexAttribArray(0);
 		GL30.glEnableVertexAttribArray(1);
-		GL30.glEnableVertexAttribArray(2);
 
 		GL13.glEnable(GL13.GL_BLEND);
 		GL30.glBlendFuncSeparate(GL13.GL_SRC_ALPHA, GL13.GL_ONE_MINUS_SRC_ALPHA, GL13.GL_ONE, GL13.GL_ONE);
@@ -99,7 +98,7 @@ public class Window {
 		shader.uploadMat4f("uProjection", Camera.getInstance().getProjectionMatrix());
 		shader.uploadMat4f("uView", Camera.getInstance().getViewMatrix());
 		shader.uploadTexture("TEX_SAMPLER", 0);
-		
+
 		MSScene scene = SceneManager.getScene();
 		if (scene != null)
 			scene.render();
