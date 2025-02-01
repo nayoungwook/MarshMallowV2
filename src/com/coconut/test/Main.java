@@ -30,7 +30,6 @@ class Workspace implements Scene {
 	private Sprite sprite = null;
 	private TTFont font = null;
 	private TTFont fontBig = null;
-	private float timer = 0f;
 
 	@Override
 	public void init() {
@@ -49,12 +48,16 @@ class Workspace implements Scene {
 			Camera.position.translate(-10, 0);
 		if (Input.keys[KeyEvent.VK_D])
 			Camera.position.translate(10, 0);
+		timer+=4;
 	}
+
+	private int timer = 0;
 
 	@Override
 	public void render() {
 		Renderer.renderImage(sprite, new Vector(0, 0), 100, 100);
 
+		sprite.cutImage(timer, 40, 100, 100);
 		Renderer.setColor(new Color(255, 150, 100));
 		Renderer.renderFont(font, "qwer", new Vector(0, 0));
 	}

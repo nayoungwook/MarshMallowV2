@@ -6,8 +6,10 @@ import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryUtil;
 
 public class Sprite {
 
@@ -115,6 +117,34 @@ public class Sprite {
 		bindImage(path);
 	}
 
+	public void cutImage(float subXOffset, float subYOffset, float subWOffset, float subHOffset) {
+		subXOffset /= originalWidth;
+		subYOffset /= originalHeight;
+		this.subXOffset = subXOffset;
+		this.subYOffset = subYOffset;
+		subWOffset /= originalWidth;
+		subHOffset /= originalHeight;
+		this.subWOffset = subWOffset;
+		this.subHOffset = subHOffset;
+
+		vertexArray = new float[] {
+				// position // color // UV Coordinates
+				50f, -50f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
+				-50f, 50f, 0.0f, subXOffset, subYOffset, // Top left 1
+				50f, 50f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
+				-50f, -50f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
+		};
+
+		FloatBuffer vertexBuffer = MemoryUtil.memAllocFloat(vertexArray.length);
+		vertexBuffer.put(vertexArray).flip(); // 버퍼 준비
+
+		// GL_DYNAMIC_DRAW로 버퍼 데이터 생성
+		GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vboID);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexBuffer, GL15.GL_DYNAMIC_DRAW);
+		MemoryUtil.memFree(vertexBuffer);
+
+	}
+
 	public Sprite() {
 	}
 
@@ -141,7 +171,7 @@ public class Sprite {
 		// Create VBO upload the vertex buffer
 		vboID = GL30.glGenBuffers();
 		GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vboID);
-		GL30.glBufferData(GL30.GL_ARRAY_BUFFER, vertexBuffer, GL30.GL_STATIC_DRAW);
+		GL30.glBufferData(GL30.GL_ARRAY_BUFFER, vertexBuffer, GL30.GL_DYNAMIC_DRAW);
 
 		// Create the indices and upload
 		IntBuffer elementBuffer = BufferUtils.createIntBuffer(elementArray.length);
@@ -149,9 +179,11 @@ public class Sprite {
 
 		eboID = GL30.glGenBuffers();
 		GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, eboID);
-		GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL30.GL_STATIC_DRAW);
+		GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL30.GL_DYNAMIC_DRAW);
 
 		uploadAttribPointers();
+		MemoryUtil.memFree(vertexBuffer);
+		MemoryUtil.memFree(elementBuffer);
 	}
 
 	public void bind() {
