@@ -6,27 +6,12 @@ import org.joml.Vector3f;
 import com.coconut.marshmallow.math.Vector;
 
 public class Camera {
-	private Matrix4f projectionMatrix, viewMatrix;
-	public Vector position;
-	public float rotation = 0f;
-
-	private static Camera instance;
-
-	public static Camera getInstance() {
-		if (instance == null) {
-			synchronized (Camera.class) {
-				if (instance == null) {
-					instance = new Camera();
-				}
-			}
-		}
-		return instance;
-	}
+	public static Matrix4f projectionMatrix = new Matrix4f(), viewMatrix = new Matrix4f();
+	public static Vector position = new Vector(0f, 0f, 1);
+	public static float relZ = 1f;
+	public static float rotation = 0f;
 
 	public Camera() {
-		position = new Vector(0f, 0f);
-		projectionMatrix = new org.joml.Matrix4f();
-		viewMatrix = new org.joml.Matrix4f();
 		adjustProjection();
 	}
 
@@ -37,26 +22,24 @@ public class Camera {
 		Camera.screenH = screenH;
 	}
 
-	public void adjustProjection() {
+	public static void adjustProjection() {
 		projectionMatrix.identity();
-		projectionMatrix.ortho(-Camera.screenW / 2, Camera.screenW / 2, -Camera.screenH / 2, Camera.screenH / 2, 0,
-				100);
+		projectionMatrix.ortho(Camera.screenW / -2, Camera.screenW / 2, Camera.screenH / -2, Camera.screenH / 2, -1f,
+				1f);
 	}
 
-	public Matrix4f getViewMatrix() {
+	public static Matrix4f getViewMatrix() {
 		Vector3f cameraFront = new Vector3f(0.0f, 0.0f, -1.0f);
 		Vector3f cameraUp = new Vector3f(0.0f, 1.0f, 0.0f);
-		this.viewMatrix.identity();
+		viewMatrix.identity();
 
-		cameraUp.rotateAxis(rotation, 0f, 0f, 1f);
+		viewMatrix.lookAt(new Vector3f(0, 0, 0), cameraFront.add(0, 0, 0.0f), cameraUp);
 
-		viewMatrix.lookAt(new Vector3f(position.getX(), position.getY(), 20.0f),
-				cameraFront.add(position.getX(), position.getY(), 0.0f), cameraUp);
-
-		return this.viewMatrix;
+		return viewMatrix;
 	}
 
-	public Matrix4f getProjectionMatrix() {
+	public static Matrix4f getProjectionMatrix() {
+		adjustProjection();
 		return projectionMatrix;
 	}
 }

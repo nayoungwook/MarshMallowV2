@@ -11,13 +11,12 @@ import org.lwjgl.stb.STBImage;
 
 public class Sprite {
 
-	private float subXOffset = 0f, subYOffset = 0f;
-	private float subWOffset = 1f, subHOffset = 1f;
+	protected float subXOffset = 0f, subYOffset = 0f;
+	protected float subWOffset = 1f, subHOffset = 1f;
 
-	private float[] vertexArray;
+	protected float[] vertexArray;
 
-	// IMPORTANT: Must be in counter-clockwise order
-	private int[] elementArray = { 2, 1, 0, // Top right triangle
+	protected int[] elementArray = { 2, 1, 0, // Top right triangle
 			0, 1, 3 // bottom left triangle
 	};
 
@@ -25,17 +24,17 @@ public class Sprite {
 		return elementArray;
 	}
 
-	private int vaoID, vboID, eboID;
+	protected int vaoID, vboID, eboID;
 
 	public int getVaoID() {
 		return vaoID;
 	}
 
-	private String filepath;
-	private int texID;
-	private float originalWidth = 1, originalHeight = 1;
+	protected String filepath;
+	protected int texID;
+	protected float originalWidth = 1, originalHeight = 1;
 
-	private void initializeGlSettings() {
+	protected void initializeGlSettings() {
 		GL30.glPixelStorei(GL30.GL_UNPACK_ALIGNMENT, 1);
 
 		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_S, GL30.GL_REPEAT);
@@ -45,7 +44,7 @@ public class Sprite {
 		GL13.glTexParameteri(GL13.GL_TEXTURE_2D, GL13.GL_TEXTURE_MIN_FILTER, GL13.GL_LINEAR);
 	}
 
-	private void bindImage(String path) {
+	protected void bindImage(String path) {
 		this.filepath = path;
 		// Generate texture on GPU
 		texID = GL30.glGenTextures();
@@ -78,7 +77,6 @@ public class Sprite {
 	}
 
 	public Sprite(String path, float subXOffset, float subYOffset, float subWOffset, float subHOffset) {
-
 		bindImage(path);
 
 		subXOffset /= originalWidth;
@@ -98,14 +96,11 @@ public class Sprite {
 				-50f, -50f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
 		};
 
-		uploadAttribPointers();
-
 		initialize();
 		initializeGlSettings();
 	}
 
 	public Sprite(String path) {
-
 		vertexArray = new float[] {
 				// position // UV Coordinates
 				50f, -50f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
@@ -120,7 +115,10 @@ public class Sprite {
 		bindImage(path);
 	}
 
-	private void uploadAttribPointers() {
+	public Sprite() {
+	}
+
+	protected void uploadAttribPointers() {
 		// Add the vertex attribute pointers
 		int positionsSize = 3;
 		int uvSize = 2;
@@ -132,7 +130,7 @@ public class Sprite {
 		GL30.glEnableVertexAttribArray(1);
 	}
 
-	private void initialize() {
+	protected void initialize() {
 		vaoID = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(vaoID);
 

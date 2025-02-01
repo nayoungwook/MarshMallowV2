@@ -4,17 +4,24 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL30;
 
-import com.coconut.marshmallow.Window;
+import com.coconut.marshmallow.Display;
+import com.coconut.marshmallow.camera.Camera;
+import com.coconut.marshmallow.math.Mathf;
 import com.coconut.marshmallow.math.Vector;
 import com.coconut.marshmallow.sprite.Sprite;
 
 public class GameObject {
 
 	public Sprite sprite;
-	public Vector position;
+	public Vector position = new Vector(0, 0);
+	public Vector renderPosition = new Vector(0, 0);
 	public float rotation = 0f;
+
 	public float width, height;
+	public float renderWidth, renderHeight;
+
 	public Vector anchor = new Vector(0.5f, 0.5f);
+	public boolean flipX = false, flipY = false;
 
 	public GameObject(Vector position, float width, float height) {
 		this.position = position;
@@ -32,6 +39,13 @@ public class GameObject {
 	private Vector3f glmAnchor;
 
 	public void render() {
+		Display.objects.add(this);
+	}
+
+	public void update() {
+	}
+
+	public void MARSHMALLOW_RENDER() {
 		if (sprite == null)
 			return;
 
@@ -40,14 +54,20 @@ public class GameObject {
 		modelMatrix = new Matrix4f();
 		glmAnchor = new Vector3f(anchor.getX(), anchor.getY(), 0f);
 
+		renderPosition = Mathf.toScreen(position);
+		Vector renderSize = Mathf.toScreenSize(width, height, flipX, flipY);
+		renderWidth = renderSize.getX();
+		renderHeight = renderSize.getY();
+
+		modelMatrix.translate(new Vector3f(renderPosition.getX(), renderPosition.getY(), 0));
+
 		modelMatrix.translate(new Vector3f((glmAnchor.x - 0.5f) * width, (glmAnchor.y - 0.5f) * height, 0f));
-		modelMatrix.rotate(this.rotation, new Vector3f(0.0f, 0.0f, 1.0f));
+		modelMatrix.rotate(-this.rotation + Camera.rotation, new Vector3f(0.0f, 0.0f, 1.0f));
 		modelMatrix.translate(new Vector3f((glmAnchor.x - 0.5f) * -1 * width, (glmAnchor.y - 0.5f) * -1 * height, 0f));
 
-		modelMatrix.translate(new Vector3f(this.position.getX(), this.position.getY(), 1));
-		modelMatrix.scale(width / 100, height / 100, 1);
+		modelMatrix.scale(renderWidth / 100, renderHeight / 100, 1);
 
-		Window.shader.uploadMat4f("uModel", modelMatrix);
+		Display.getShader().uploadMat4f("uModel", modelMatrix);
 
 		GL30.glBindVertexArray(sprite.getVaoID());
 

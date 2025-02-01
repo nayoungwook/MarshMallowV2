@@ -1,6 +1,6 @@
 package com.coconut.marshmallow.state;
 
-public interface MSScene {
+public interface Scene {
 
 	public void init();
 

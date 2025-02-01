@@ -2,13 +2,13 @@ package com.coconut.marshmallow.state;
 
 public class SceneManager {
 
-	private static MSScene scene;
+	private static Scene scene;
 
-	public static MSScene getScene() {
+	public static Scene getScene() {
 		return SceneManager.scene;
 	}
 
-	public static void setScene(MSScene scene) {
+	public static void setScene(Scene scene) {
 		SceneManager.scene = scene;
 		SceneManager.scene.init();
 	}

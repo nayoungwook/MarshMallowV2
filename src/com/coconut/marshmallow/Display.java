@@ -1,5 +1,9 @@
 package com.coconut.marshmallow;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -9,29 +13,26 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 import com.coconut.marshmallow.camera.Camera;
-import com.coconut.marshmallow.input.KeyListener;
-import com.coconut.marshmallow.input.MouseListener;
+import com.coconut.marshmallow.input.Input;
+import com.coconut.marshmallow.object.GameObject;
 import com.coconut.marshmallow.shader.Shader;
-import com.coconut.marshmallow.state.MSScene;
+import com.coconut.marshmallow.shader.ShaderManager;
+import com.coconut.marshmallow.state.Scene;
 import com.coconut.marshmallow.state.SceneManager;
 
-public class Window {
+public class Display {
 
-	private int width, height;
+	public static int width, height;
 	String title;
 
 	private long glfwWindow;
 
-	private KeyListener keyListener;
-	private MouseListener mouseListener;
+	private Input input = new Input();
 
-	public Window(String title, int width, int height) {
+	public Display(String title, int width, int height) {
 		this.title = title;
-		this.width = width;
-		this.height = height;
-
-		this.keyListener = new KeyListener();
-		this.mouseListener = new MouseListener();
+		Display.width = width;
+		Display.height = height;
 
 		inintializeOpenGL();
 		init();
@@ -51,7 +52,7 @@ public class Window {
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
 		GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_FALSE);
 
-		glfwWindow = GLFW.glfwCreateWindow(this.width, this.height, this.title, MemoryUtil.NULL, MemoryUtil.NULL);
+		glfwWindow = GLFW.glfwCreateWindow(Display.width, Display.height, this.title, MemoryUtil.NULL, MemoryUtil.NULL);
 		if (glfwWindow == MemoryUtil.NULL) {
 			throw new IllegalStateException("Failed to create the GLFW window.");
 		}
@@ -61,9 +62,10 @@ public class Window {
 
 		GLFW.glfwShowWindow(glfwWindow);
 
-		GLFW.glfwSetKeyCallback(glfwWindow, keyListener.getKeyboardCallback());
-		GLFW.glfwSetCursorPosCallback(glfwWindow, mouseListener.getMouseMoveCallback());
-		GLFW.glfwSetMouseButtonCallback(glfwWindow, mouseListener.getMouseButtonsCallback());
+		GLFW.glfwSetKeyCallback(glfwWindow, input.getKeyboardCallback());
+		GLFW.glfwSetCursorPosCallback(glfwWindow, input.getMouseMoveCallback());
+		GLFW.glfwSetMouseButtonCallback(glfwWindow, input.getMouseButtonsCallback());
+		GLFW.glfwSetScrollCallback(glfwWindow, input.getMouseScrollCallback());
 
 		GL.createCapabilities();
 
@@ -71,37 +73,58 @@ public class Window {
 		GL30.glEnableVertexAttribArray(1);
 
 		GL13.glEnable(GL13.GL_BLEND);
-		GL30.glBlendFuncSeparate(GL13.GL_SRC_ALPHA, GL13.GL_ONE_MINUS_SRC_ALPHA, GL13.GL_ONE, GL13.GL_ONE);
+		GL30.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	public void init() {
-		shader = new Shader("res/shader/vertex.glsl", "res/shader/fragment.glsl");
+		shader = ShaderManager.defaultShader;
 	}
+
+	public static ArrayList<GameObject> renderQueue = new ArrayList<>();
 
 	public void update() {
 		Camera.updateScreenSize(width, height);
 
 		GLFW.glfwPollEvents();
 
-		MSScene scene = SceneManager.getScene();
+		Scene scene = SceneManager.getScene();
 		if (scene != null)
 			scene.update();
 	}
 
-	public static Shader shader;
+	private static Shader shader;
+
+	public static Shader getShader() {
+		return shader;
+	}
+
+	public static void uploadShader(Shader shader) {
+		Display.shader.unbind();
+		shader.bind();
+		Display.shader = shader;
+	}
+
+	public static List<GameObject> objects = new ArrayList<>();
 
 	public void render() {
 		GL30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		GL30.glClear(GL13.GL_COLOR_BUFFER_BIT);
+		GL30.glClear(GL13.GL_COLOR_BUFFER_BIT | GL13.GL_DEPTH_BUFFER_BIT);
 
 		shader.bind();
-		shader.uploadMat4f("uProjection", Camera.getInstance().getProjectionMatrix());
-		shader.uploadMat4f("uView", Camera.getInstance().getViewMatrix());
+		shader.uploadMat4f("uProjection", Camera.getProjectionMatrix());
+		shader.uploadMat4f("uView", Camera.getViewMatrix());
 		shader.uploadTexture("TEX_SAMPLER", 0);
 
-		MSScene scene = SceneManager.getScene();
+		Scene scene = SceneManager.getScene();
+		objects.clear();
 		if (scene != null)
 			scene.render();
+
+		objects.sort(Comparator.comparingDouble(obj -> obj.position.getZ()));
+
+		for (int i = 0; i < objects.size(); i++) {
+			objects.get(i).MARSHMALLOW_RENDER();
+		}
 
 		GLFW.glfwSwapBuffers(glfwWindow);
 	}
