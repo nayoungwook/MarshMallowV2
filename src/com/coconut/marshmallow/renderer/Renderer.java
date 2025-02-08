@@ -6,6 +6,7 @@ import com.coconut.marshmallow.Display;
 import com.coconut.marshmallow.font.TTFont;
 import com.coconut.marshmallow.math.Vector;
 import com.coconut.marshmallow.object.GameObject;
+import com.coconut.marshmallow.shader.ShaderManager;
 import com.coconut.marshmallow.sprite.Sprite;
 
 public class Renderer {
@@ -80,6 +81,19 @@ public class Renderer {
 			return;
 
 		FontRenderer object = new FontRenderer(new Vector(0, 0), 100, 100, color, text, font);
+		object.shader = ShaderManager.defaultShader;
+		object.text = text;
+		object.position = position;
+		Display.objects.add(object);
+	}
+
+	public static void renderFont(TTFont font, String text, Vector position, String align) {
+		if (font == null)
+			return;
+
+		FontRenderer object = new FontRenderer(new Vector(0, 0), 100, 100, color, text, font);
+		object.shader = ShaderManager.defaultShader;
+		object.align = align;
 		object.text = text;
 		object.position = position;
 		Display.objects.add(object);

@@ -21,12 +21,14 @@ public class FontRenderer extends GameObject {
 
 	public TTFont font = null;
 	public String text = "";
+	public String align = "center";
 
 	@Override
 	public void MARSHMALLOW_RENDER() {
 		font.bakeFont(text, color);
 		sprite = font;
 		font.bind();
+		Display.uploadShader(shader);
 
 		modelMatrix = new Matrix4f();
 		glmAnchor = new Vector3f(anchor.getX(), anchor.getY(), 0f);
@@ -38,6 +40,11 @@ public class FontRenderer extends GameObject {
 		Vector renderSize = Mathf.toScreenSize(width, height, flipX, flipY);
 		renderWidth = renderSize.getX();
 		renderHeight = renderSize.getY();
+
+		if (align == "left")
+			renderPosition.translate(renderWidth / 2, 0);
+		else if (align == "right")
+			renderPosition.translate(renderWidth / -2, 0);
 
 		modelMatrix.translate(new Vector3f(renderPosition.getX(), renderPosition.getY(), 0));
 

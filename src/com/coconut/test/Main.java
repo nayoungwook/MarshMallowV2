@@ -71,5 +71,7 @@ class Workspace implements Scene {
 		shader.uploadFloat("uTimer", timer);
 		Display.uploadShader(shader);
 		Renderer.renderImage(sprite, new Vector(0, 0), 200, 200);
+
+		Renderer.renderFont(font, "asdf", new Vector(0, 0, 3), "right");
 	}
 }
