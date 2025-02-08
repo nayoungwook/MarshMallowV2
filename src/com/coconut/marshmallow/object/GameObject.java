@@ -1,6 +1,7 @@
 package com.coconut.marshmallow.object;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL30;
 
@@ -8,6 +9,8 @@ import com.coconut.marshmallow.Display;
 import com.coconut.marshmallow.camera.Camera;
 import com.coconut.marshmallow.math.Mathf;
 import com.coconut.marshmallow.math.Vector;
+import com.coconut.marshmallow.shader.Shader;
+import com.coconut.marshmallow.shader.ShaderManager;
 import com.coconut.marshmallow.sprite.Sprite;
 
 public class GameObject {
@@ -19,6 +22,8 @@ public class GameObject {
 
 	public float width, height;
 	public float renderWidth, renderHeight;
+
+	public Shader shader = ShaderManager.defaultShader;
 
 	public Vector anchor = new Vector(0.5f, 0.5f);
 	public boolean flipX = false, flipY = false;
@@ -39,6 +44,7 @@ public class GameObject {
 	private Vector3f glmAnchor;
 
 	public void render() {
+		this.shader = Display.getShader();
 		Display.objects.add(this);
 	}
 
@@ -49,6 +55,9 @@ public class GameObject {
 		if (sprite == null)
 			return;
 
+		if (Display.getShader() != shader)
+			Display.uploadShader(shader);
+
 		sprite.bind();
 
 		modelMatrix = new Matrix4f();
@@ -58,6 +67,9 @@ public class GameObject {
 		Vector renderSize = Mathf.toScreenSize(width, height, flipX, flipY);
 		renderWidth = renderSize.getX();
 		renderHeight = renderSize.getY();
+
+		Display.getShader().uploadVec2f("uPosition", new Vector2f(this.position.getX(), this.position.getY()));
+		Display.getShader().uploadVec2f("uSize", new Vector2f(this.width, this.height));
 
 		modelMatrix.translate(new Vector3f(renderPosition.getX(), renderPosition.getY(), 0));
 

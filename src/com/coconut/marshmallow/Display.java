@@ -7,8 +7,10 @@ import java.util.List;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
@@ -23,6 +25,7 @@ import com.coconut.marshmallow.state.SceneManager;
 public class Display {
 
 	public static int width, height;
+	public static int normWidth, normHeight;
 	String title;
 
 	private long glfwWindow;
@@ -33,11 +36,31 @@ public class Display {
 		this.title = title;
 		Display.width = width;
 		Display.height = height;
+		normWidth = width;
+		normHeight = height;
 
 		inintializeOpenGL();
 		init();
 
 		Camera.updateScreenSize(width, height);
+	}
+
+	public void setFullScreen() {
+		long monitor = GLFW.glfwGetPrimaryMonitor();
+		GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
+		Camera.relZ *= (float) vidMode.width() / width;
+		Display.width = vidMode.width();
+		Display.height = vidMode.height();
+		GL20.glViewport(0, 0, width, height);
+		GLFW.glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, vidMode.width(), vidMode.height(), vidMode.refreshRate());
+	}
+
+	public void setWindowScreen(int width, int height) {
+		Camera.relZ *= (float) width / Display.width;
+		Display.width = width;
+		Display.height = height;
+		GL20.glViewport(0, 0, width, height);
+		GLFW.glfwSetWindowMonitor(glfwWindow, 0, 100, 100, width, height, GLFW.GLFW_DONT_CARE);
 	}
 
 	public void inintializeOpenGL() { // Setup an error callback
@@ -117,6 +140,7 @@ public class Display {
 
 		Scene scene = SceneManager.getScene();
 		objects.clear();
+
 		if (scene != null)
 			scene.render();
 

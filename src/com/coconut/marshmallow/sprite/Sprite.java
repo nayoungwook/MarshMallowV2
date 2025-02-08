@@ -18,6 +18,22 @@ public class Sprite {
 
 	protected float[] vertexArray;
 
+	public float getSubXOffset() {
+		return subXOffset;
+	}
+
+	public float getSubYOffset() {
+		return subYOffset;
+	}
+
+	public float getSubWOffset() {
+		return subWOffset;
+	}
+
+	public float getSubHOffset() {
+		return subHOffset;
+	}
+
 	protected int[] elementArray = { 2, 1, 0, // Top right triangle
 			0, 1, 3 // bottom left triangle
 	};
@@ -141,8 +157,6 @@ public class Sprite {
 		// GL_DYNAMIC_DRAW로 버퍼 데이터 생성
 		GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vboID);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexBuffer, GL15.GL_DYNAMIC_DRAW);
-		MemoryUtil.memFree(vertexBuffer);
-
 	}
 
 	public Sprite() {
@@ -182,8 +196,6 @@ public class Sprite {
 		GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL30.GL_DYNAMIC_DRAW);
 
 		uploadAttribPointers();
-		MemoryUtil.memFree(vertexBuffer);
-		MemoryUtil.memFree(elementBuffer);
 	}
 
 	public void bind() {

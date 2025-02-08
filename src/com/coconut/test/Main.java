@@ -1,6 +1,5 @@
 package com.coconut.test;
 
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import com.coconut.marshmallow.Display;
@@ -9,6 +8,7 @@ import com.coconut.marshmallow.font.TTFont;
 import com.coconut.marshmallow.input.Input;
 import com.coconut.marshmallow.math.Vector;
 import com.coconut.marshmallow.renderer.Renderer;
+import com.coconut.marshmallow.shader.Shader;
 import com.coconut.marshmallow.sprite.Sprite;
 import com.coconut.marshmallow.state.Scene;
 import com.coconut.marshmallow.state.SceneManager;
@@ -30,13 +30,17 @@ class Workspace implements Scene {
 	private Sprite sprite = null;
 	private TTFont font = null;
 	private TTFont fontBig = null;
+	private Shader shader = null;
 
 	@Override
 	public void init() {
 		sprite = new Sprite("msResources/img/aru.png");
 		font = new TTFont("font/font.ttf", 64f);
 		fontBig = new TTFont("font/font.ttf", 64f * 2);
+		shader = new Shader("msResources/shader/vertex.glsl", "msResources/shader/fragment.glsl");
 	}
+
+	private boolean fs = false;
 
 	@Override
 	public void update() {
@@ -48,17 +52,24 @@ class Workspace implements Scene {
 			Camera.position.translate(-10, 0);
 		if (Input.keys[KeyEvent.VK_D])
 			Camera.position.translate(10, 0);
-		timer+=4;
+		timer += 0.1;
+
+		if (Input.keys[KeyEvent.VK_F]) {
+			if (!fs)
+				Main.window.setFullScreen();
+			else
+				Main.window.setWindowScreen(1280, 720);
+			fs = !fs;
+			Input.keys[KeyEvent.VK_F] = false;
+		}
 	}
 
-	private int timer = 0;
+	private float timer = 0;
 
 	@Override
 	public void render() {
-		Renderer.renderImage(sprite, new Vector(0, 0), 100, 100);
-
-		sprite.cutImage(timer, 40, 100, 100);
-		Renderer.setColor(new Color(255, 150, 100));
-		Renderer.renderFont(font, "qwer", new Vector(0, 0));
+		shader.uploadFloat("uTimer", timer);
+		Display.uploadShader(shader);
+		Renderer.renderImage(sprite, new Vector(0, 0), 200, 200);
 	}
 }

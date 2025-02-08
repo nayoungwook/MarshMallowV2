@@ -57,6 +57,7 @@ public class Renderer {
 			return;
 
 		GameObject object = new GameObject(0, 0, width, height);
+		object.shader = Display.getShader();
 		object.position = position;
 		object.sprite = sprite;
 		Display.objects.add(object);
@@ -67,6 +68,7 @@ public class Renderer {
 			return;
 
 		GameObject object = new GameObject(0, 0, width, height);
+		object.shader = Display.getShader();
 		object.position = position;
 		object.sprite = sprite;
 		object.rotation = rotation;
@@ -77,12 +79,9 @@ public class Renderer {
 		if (font == null)
 			return;
 
-		font.bakeFont(text, color);
-		GameObject object = new GameObject(0, 0, 100, 100);
+		FontRenderer object = new FontRenderer(new Vector(0, 0), 100, 100, color, text, font);
+		object.text = text;
 		object.position = position;
-		object.sprite = font;
-		object.width = font.getWidth();
-		object.height = font.getHeight();
 		Display.objects.add(object);
 	}
 

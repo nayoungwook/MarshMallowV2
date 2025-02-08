@@ -12,6 +12,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 public class Shader {
@@ -91,6 +92,8 @@ public class Shader {
 	private static final FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
 
 	public void uploadMat4f(String varName, Matrix4f mat4) {
+		if (shaderProgramBackup != shaderProgram)
+			bind();
 		int varLocation = 0;
 
 		if (uniformLocations.containsKey(varName))
@@ -99,56 +102,173 @@ public class Shader {
 			varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
 			uniformLocations.put(varName, varLocation);
 		}
+		if (varLocation == -1)
+			return;
 
-		if (shaderProgramBackup != shaderProgram)
-			bind();
 		mat4.get(matBuffer);
 		GL30.glUniformMatrix4fv(varLocation, false, matBuffer);
 	}
 
-	public void uploadMat3f(String varName, Matrix3f mat3) {
-		int varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
-
+	public void uploadVec2fv(String varName, Vector2f[] vec) {
 		if (shaderProgramBackup != shaderProgram)
 			bind();
+
+		int location = 0;
+		if (uniformLocations.containsKey(varName))
+			location = uniformLocations.get(varName);
+		else {
+			location = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, location);
+		}
+
+		float[] floatArray = new float[vec.length * 2];
+		for (int i = 0; i < vec.length; i++) {
+			if (vec[i] != null) {
+				floatArray[i * 2] = vec[i].x;
+				floatArray[i * 2 + 1] = vec[i].y;
+			} else {
+				floatArray[i * 2] = 0.0f;
+				floatArray[i * 2 + 1] = 0.0f;
+			}
+		}
+		if (location == -1)
+			return;
+		GL20.glUniform2fv(location, floatArray);
+	}
+
+	public void uploadVec3fv(String varName, Vector3f[] vec) {
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+
+		int location = 0;
+		if (uniformLocations.containsKey(varName))
+			location = uniformLocations.get(varName);
+		else {
+			location = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, location);
+		}
+
+		float[] floatArray = new float[vec.length * 3];
+		for (int i = 0; i < vec.length; i++) {
+			if (vec[i] != null) {
+				floatArray[i * 3] = vec[i].x;
+				floatArray[i * 3 + 1] = vec[i].y;
+				floatArray[i * 3 + 2] = vec[i].z;
+			} else {
+				floatArray[i * 3] = 0.0f;
+				floatArray[i * 3 + 1] = 0.0f;
+				floatArray[i * 3 + 2] = 0.0f;
+			}
+		}
+		if (location == -1)
+			return;
+		GL20.glUniform3fv(location, floatArray);
+	}
+
+	public void uploadMat3f(String varName, Matrix3f mat3) {
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+		int varLocation = 0;
+		if (uniformLocations.containsKey(varName))
+			varLocation = uniformLocations.get(varName);
+		else {
+			varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, varLocation);
+		}
 
 		mat3.get(matBuffer);
 		GL30.glUniformMatrix3fv(varLocation, false, matBuffer);
 	}
 
 	public void uploadVec4f(String varName, Vector4f vec) {
-		int varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
-		bind();
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+		int varLocation = 0;
+		if (uniformLocations.containsKey(varName))
+			varLocation = uniformLocations.get(varName);
+		else {
+			varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, varLocation);
+		}
+		if (varLocation == -1)
+			return;
 		GL30.glUniform4f(varLocation, vec.x, vec.y, vec.z, vec.w);
 	}
 
 	public void uploadVec3f(String varName, Vector3f vec) {
-		int varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
-		bind();
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+		int varLocation = 0;
+		if (uniformLocations.containsKey(varName))
+			varLocation = uniformLocations.get(varName);
+		else {
+			varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, varLocation);
+		}
+		if (varLocation == -1)
+			return;
 		GL30.glUniform3f(varLocation, vec.x, vec.y, vec.z);
 	}
 
 	public void uploadVec2f(String varName, Vector2f vec) {
-		int varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
-		bind();
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+		int varLocation = 0;
+		if (uniformLocations.containsKey(varName))
+			varLocation = uniformLocations.get(varName);
+		else {
+			varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, varLocation);
+		}
+
+		if (varLocation == -1)
+			return;
+
 		GL30.glUniform2f(varLocation, vec.x, vec.y);
 	}
 
 	public void uploadFloat(String varName, float val) {
-		int varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
-		bind();
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+		int varLocation = 0;
+		if (uniformLocations.containsKey(varName))
+			varLocation = uniformLocations.get(varName);
+		else {
+			varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, varLocation);
+		}
+		if (varLocation == -1)
+			return;
 		GL30.glUniform1f(varLocation, val);
 	}
 
 	public void uploadInt(String varName, int val) {
-		int varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
-		bind();
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+		int varLocation = 0;
+		if (uniformLocations.containsKey(varName))
+			varLocation = uniformLocations.get(varName);
+		else {
+			varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, varLocation);
+		}
+		if (varLocation == -1)
+			return;
 		GL30.glUniform1i(varLocation, val);
 	}
 
 	public void uploadTexture(String varName, int slot) {
-		int varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
-		bind();
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+		int varLocation = 0;
+		if (uniformLocations.containsKey(varName))
+			varLocation = uniformLocations.get(varName);
+		else {
+			varLocation = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, varLocation);
+		}
+		if (varLocation == -1)
+			return;
 		GL30.glUniform1i(varLocation, slot);
 	}
 }
