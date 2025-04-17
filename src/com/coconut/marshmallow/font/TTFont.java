@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL13;
@@ -19,8 +18,6 @@ public class TTFont extends Sprite {
 	private Font awtFont = null;
 	public float size = 15f;
 	public String textAlign = "center";
-
-	private HashMap<String, BufferedImage> fontImageCache = new HashMap<>();
 
 	public Font getFont(String path, float size) {
 		InputStream stream;
@@ -39,11 +36,11 @@ public class TTFont extends Sprite {
 
 		vertexArray = new float[] {
 				// position // UV Coordinates
-				50f, -50f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
-																					// right 0
-				-50f, 50f, 0.0f, subXOffset, subYOffset, // Top left 1
-				50f, 50f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
-				-50f, -50f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
+				0.5f, -0.5f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
+																						// right 0
+				-0.5f, 0.5f, 0.0f, subXOffset, subYOffset, // Top left 1
+				0.5f, 0.5f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
+				-0.5f, -0.5f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
 		};
 
 		initialize();
@@ -84,12 +81,7 @@ public class TTFont extends Sprite {
 
 	public void bakeFont(String text, Color color) {
 		BufferedImage image = null;
-		if (!fontImageCache.containsKey(text)) {
-			image = createTextImage(text, awtFont, color);
-			fontImageCache.put(text, image);
-		} else {
-			image = fontImageCache.get(text);
-		}
+		image = createTextImage(text, awtFont, color);
 
 		updateTexture(image);
 	}

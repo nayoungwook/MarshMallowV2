@@ -33,7 +33,7 @@ public class Shapes {
 	public Shapes initializeOval() {
 		float x = 0, y = 0;
 		int segments = 300;
-		float radius = 50f;
+		float radius = 0.5f;
 
 		// 정점 배열 (x, y, z 좌표를 저장)
 		vertexArray = new float[(segments + 2) * 3]; // (segments + 1)개의 점 + 중심점
@@ -63,10 +63,10 @@ public class Shapes {
 	}
 
 	public Shapes initializeRect() {
-		vertexArray = new float[] { 50f, -50f, 0.0f, // Bottom
-				-50f, 50f, 0.0f, // Top left 1
-				50f, 50f, 0.0f, // Top right 2
-				-50f, -50f, 0.0f, // Bottom left 3
+		vertexArray = new float[] { 0.5f, -0.5f, 0.0f, // Bottom
+				-0.5f, 0.5f, 0.0f, // Top left 1
+				0.5f, 0.5f, 0.0f, // Top right 2
+				-0.5f, -0.5f, 0.0f, // Bottom left 3
 		};
 
 		initialize();

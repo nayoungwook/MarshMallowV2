@@ -55,11 +55,11 @@ public class Sprite {
 	protected void initializeGlSettings() {
 		GL30.glPixelStorei(GL30.GL_UNPACK_ALIGNMENT, 1);
 
-		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_S, GL30.GL_REPEAT);
-		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_T, GL30.GL_REPEAT);
+		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_S, GL30.GL_CLAMP);
+		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_T, GL30.GL_CLAMP);
 
-		GL13.glTexParameteri(GL13.GL_TEXTURE_2D, GL13.GL_TEXTURE_MAG_FILTER, GL13.GL_LINEAR);
-		GL13.glTexParameteri(GL13.GL_TEXTURE_2D, GL13.GL_TEXTURE_MIN_FILTER, GL13.GL_LINEAR);
+		GL13.glTexParameteri(GL13.GL_TEXTURE_2D, GL13.GL_TEXTURE_MAG_FILTER, GL13.GL_NEAREST);
+		GL13.glTexParameteri(GL13.GL_TEXTURE_2D, GL13.GL_TEXTURE_MIN_FILTER, GL13.GL_NEAREST);
 	}
 
 	protected void bindImage(String path) {
@@ -108,10 +108,10 @@ public class Sprite {
 
 		vertexArray = new float[] {
 				// position // color // UV Coordinates
-				50f, -50f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
-				-50f, 50f, 0.0f, subXOffset, subYOffset, // Top left 1
-				50f, 50f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
-				-50f, -50f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
+				0.5f, -0.5f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
+				-0.5f, 0.5f, 0.0f, subXOffset, subYOffset, // Top left 1
+				0.5f, 0.5f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
+				-0.5f, -0.5f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
 		};
 
 		initialize();
@@ -119,13 +119,13 @@ public class Sprite {
 	}
 
 	public Sprite(String path) {
+
 		vertexArray = new float[] {
-				// position // UV Coordinates
-				50f, -50f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
-																					// right 0
-				-50f, 50f, 0.0f, subXOffset, subYOffset, // Top left 1
-				50f, 50f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
-				-50f, -50f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
+				// position // color // UV Coordinates
+				0.5f, -0.5f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
+				-0.5f, 0.5f, 0.0f, subXOffset, subYOffset, // Top left 1
+				0.5f, 0.5f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
+				-0.5f, -0.5f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
 		};
 
 		initialize();
@@ -145,10 +145,10 @@ public class Sprite {
 
 		vertexArray = new float[] {
 				// position // color // UV Coordinates
-				50f, -50f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
-				-50f, 50f, 0.0f, subXOffset, subYOffset, // Top left 1
-				50f, 50f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
-				-50f, -50f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
+				0.5f, -0.5f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
+				-0.5f, 0.5f, 0.0f, subXOffset, subYOffset, // Top left 1
+				0.5f, 0.5f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
+				-0.5f, -0.5f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
 		};
 
 		FloatBuffer vertexBuffer = MemoryUtil.memAllocFloat(vertexArray.length);

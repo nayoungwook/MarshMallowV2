@@ -6,40 +6,39 @@ import org.joml.Vector3f;
 import com.coconut.marshmallow.math.Vector;
 
 public class Camera {
-	public static Matrix4f projectionMatrix = new Matrix4f(), viewMatrix = new Matrix4f();
-	public static Vector position = new Vector(0f, 0f, 1);
+	private static Matrix4f projectionMatrix = new Matrix4f(), viewMatrix = new Matrix4f();
+	public static Vector position = new Vector(0f, 0f, 1f);
 	public static float relZ = 1f;
 	public static float rotation = 0f;
 
 	public Camera() {
-		adjustProjection();
 	}
 
-	private static float screenW, screenH;
+	private static float resolutionX = 0, resolutionY = 0;
 
-	public static void updateScreenSize(float screenW, float screenH) {
-		Camera.screenW = screenW;
-		Camera.screenH = screenH;
-	}
+	public static void adjustProjection(float resolutionX, float resolutionY) {
+		Camera.resolutionX = resolutionX;
+		Camera.resolutionY = resolutionY;
 
-	public static void adjustProjection() {
-		projectionMatrix.identity();
-		projectionMatrix.ortho(Camera.screenW / -2, Camera.screenW / 2, Camera.screenH / -2, Camera.screenH / 2, -1f,
-				1f);
+		projectionMatrix = new Matrix4f();
+		projectionMatrix.identity().ortho(resolutionX / -2, resolutionX / 2, resolutionY / -2, resolutionY / 2, -1, 1);
 	}
 
 	public static Matrix4f getViewMatrix() {
 		Vector3f cameraFront = new Vector3f(0.0f, 0.0f, -1.0f);
 		Vector3f cameraUp = new Vector3f(0.0f, 1.0f, 0.0f);
-		viewMatrix.identity();
 
-		viewMatrix.lookAt(new Vector3f(0, 0, 0), cameraFront.add(0, 0, 0.0f), cameraUp);
+		Vector3f cameraPos = new Vector3f(-position.getX(), -position.getY(), -1);
+
+		viewMatrix.identity();
+		viewMatrix.translate(cameraPos);
+		viewMatrix.scale(position.getZ());
+		viewMatrix.lookAt(new Vector3f(0, 0, 0), cameraFront, cameraUp);
 
 		return viewMatrix;
 	}
 
 	public static Matrix4f getProjectionMatrix() {
-		adjustProjection();
 		return projectionMatrix;
 	}
 }

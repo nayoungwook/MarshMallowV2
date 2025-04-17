@@ -39,9 +39,7 @@ public class Input {
 		mouseButtons = new GLFWMouseButtonCallback() {
 			@Override
 			public void invoke(long window, int button, int action, int mods) {
-				if (button == GLFW.GLFW_MOUSE_BUTTON_1)
-
-					buttons[button] = (action != GLFW.GLFW_RELEASE);
+				buttons[button] = (action != GLFW.GLFW_RELEASE);
 			}
 		};
 

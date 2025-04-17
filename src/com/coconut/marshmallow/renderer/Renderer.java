@@ -80,10 +80,9 @@ public class Renderer {
 		if (font == null)
 			return;
 
-		FontRenderer object = new FontRenderer(new Vector(0, 0), 100, 100, color, text, font);
+		FontRenderer object = new FontRenderer(position, 100, 100, color, text, font);
 		object.shader = ShaderManager.defaultShader;
 		object.text = text;
-		object.position = position;
 		Display.objects.add(object);
 	}
 

@@ -42,7 +42,7 @@ public class Display {
 		inintializeOpenGL();
 		init();
 
-		Camera.updateScreenSize(width, height);
+		Camera.adjustProjection(width, height);
 	}
 
 	public void setFullScreen() {
@@ -106,8 +106,6 @@ public class Display {
 	public static ArrayList<GameObject> renderQueue = new ArrayList<>();
 
 	public void update() {
-		Camera.updateScreenSize(width, height);
-
 		GLFW.glfwPollEvents();
 
 		Scene scene = SceneManager.getScene();

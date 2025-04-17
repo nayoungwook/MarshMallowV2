@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL30;
 
 import com.coconut.marshmallow.Display;
 import com.coconut.marshmallow.camera.Camera;
-import com.coconut.marshmallow.math.Mathf;
 import com.coconut.marshmallow.math.Vector;
 import com.coconut.marshmallow.object.GameObject;
 import com.coconut.marshmallow.shader.Shader;
@@ -23,21 +22,17 @@ public class RectRenderer extends GameObject {
 
 	@Override
 	public void MARSHMALLOW_RENDER() {
+
 		modelMatrix = new Matrix4f();
-		Vector3f glmAnchor = new Vector3f(anchor.getX(), anchor.getY(), 0f);
+		glmAnchor = new Vector3f(anchor.getX(), anchor.getY(), 0f);
 
-		renderPosition = Mathf.toScreen(position);
-		Vector renderSize = Mathf.toScreenSize(width, height, flipX, flipY);
-		renderWidth = renderSize.getX();
-		renderHeight = renderSize.getY();
-
-		modelMatrix.translate(new Vector3f(renderPosition.getX(), renderPosition.getY(), 0));
+		modelMatrix.translate(new Vector3f(position.getX(), position.getY(), position.getZ()));
 
 		modelMatrix.translate(new Vector3f((glmAnchor.x - 0.5f) * width, (glmAnchor.y - 0.5f) * height, 0f));
 		modelMatrix.rotate(-this.rotation + Camera.rotation, new Vector3f(0.0f, 0.0f, 1.0f));
 		modelMatrix.translate(new Vector3f((glmAnchor.x - 0.5f) * -1 * width, (glmAnchor.y - 0.5f) * -1 * height, 0f));
 
-		modelMatrix.scale(renderWidth / 100, renderHeight / 100, 1);
+		modelMatrix.scale(width, height, 1);
 
 		float r = (float) color.getRed() / 255, g = (float) color.getGreen() / 255, b = (float) color.getBlue() / 255,
 				a = (float) color.getAlpha() / 255;

@@ -1,5 +1,8 @@
 package com.coconut.marshmallow.math;
 
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
+
 import com.coconut.marshmallow.Display;
 import com.coconut.marshmallow.camera.Camera;
 
@@ -22,70 +25,34 @@ public class Mathf {
 		return (float) Math.sin(getAngle(position, position2)) * moveSpeed;
 	}
 
-	public static Vector toScreenSize(float width, float height, boolean flipX, boolean flipY) {
-		int fx = 1, fy = 1;
+	public static Vector worldToScreen(Vector worldPos) {
+		// 1. MVP 변환
+		Vector4f clipSpacePos = new Vector4f(worldPos.getX(), worldPos.getY(), worldPos.getZ(), 1.0f)
+				.mul(Camera.getViewMatrix()).mul(Camera.getProjectionMatrix());
 
-		float renderWidth, renderHeight;
+		// 2. 정규화 장치 좌표계(NDC)로 만들기
+		clipSpacePos.div(clipSpacePos.w);
 
-		renderWidth = width * (Camera.position.getZ() * Camera.relZ);
-		renderHeight = height * (Camera.position.getZ() * Camera.relZ);
+		// 3. NDC (-1 ~ 1)을 스크린 좌표로 변환
+		float x = (clipSpacePos.x * 0.5f) * Display.width;
+		float y = (clipSpacePos.y * 0.5f) * Display.height;
 
-		if (flipX) {
-			fx = -1;
-		}
-
-		if (flipY) {
-			fy = -1;
-		}
-
-		renderWidth *= (fx);
-		renderHeight *= (fy);
-
-		return new Vector(renderWidth, renderHeight);
+		return new Vector(x, y, worldPos.getZ());
 	}
 
-	public static Vector toScreen(Vector position) {
-		float width = Display.width, height = Display.height;
+	public static Vector screenToWorld(Vector screenPos) {
+		float x = (2.0f * screenPos.getX()) / Display.width;
+		float y = -(2.0f * screenPos.getY()) / -Display.height;
+		float z = screenPos.getZ() * 2.0f - 1;
 
-		float camX = Camera.position.getX();
-		float camY = Camera.position.getY();
-		float camZ = Camera.position.getZ();
-		float camRot = Camera.rotation;
+		Vector4f ndc = new Vector4f(x, y, z, 1.0f);
 
-		float relX = position.getX() - camX;
-		float relY = position.getY() - camY;
+		Matrix4f inverseVP = new Matrix4f(Camera.getProjectionMatrix()).mul(Camera.getViewMatrix()).invert();
 
-		float dist = Mathf.getDistance(new Vector(0, 0), new Vector(relX, relY));
-		float angle = (float) Math.atan2(relY, relX) + camRot;
+		Vector4f world = ndc.mul(inverseVP);
 
-		float depthScale = camZ * Camera.relZ;
-		float screenX = (float) (Math.cos(angle) * dist * depthScale);
-		float screenY = (float) (Math.sin(angle) * dist * depthScale);
+		world.div(world.w);
 
-		return new Vector(screenX, screenY);
-	}
-
-	public static Vector toWorld(Vector screenPosition) {
-		float width = Display.width, height = Display.height;
-
-		float camX = Camera.position.getX();
-		float camY = Camera.position.getY();
-		float camZ = Camera.position.getZ();
-		float camRot = Camera.rotation;
-
-		float relX = screenPosition.getX();
-		float relY = screenPosition.getY();
-
-		float depthScale = camZ == 0 ? 1 : 1 / camZ / Camera.relZ;
-		float worldX = relX * depthScale;
-		float worldY = relY * depthScale;
-
-		float angle = (float) Math.atan2(worldY, worldX) - camRot;
-		float dist = (float) Math.sqrt(worldX * worldX + worldY * worldY);
-
-		float finalX = camX + (float) Math.cos(angle) * dist;
-		float finalY = camY + (float) Math.sin(angle) * dist;
-
-		return new Vector(finalX, finalY);
+		return new Vector(world.x, world.y, world.z);
 	}
 }

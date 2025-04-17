@@ -2,7 +2,7 @@ package com.coconut.marshmallow.math;
 
 public class Vector {
 
-	private float x, y, z = -1;
+	private float x, y, z = 1;
 
 	public Vector(float x, float y) {
 		this.x = x;
@@ -14,7 +14,7 @@ public class Vector {
 		this.y = y;
 		this.z = z;
 	}
-	
+
 	public Vector cloneVector() {
 		Vector result = new Vector(0, 0);
 		result.setTransform(x, y, z);
