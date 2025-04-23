@@ -1,16 +1,15 @@
 package com.coconut.test;
 
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import com.coconut.marshmallow.Display;
 import com.coconut.marshmallow.camera.Camera;
 import com.coconut.marshmallow.font.TTFont;
 import com.coconut.marshmallow.input.Input;
-import com.coconut.marshmallow.math.Mathf;
 import com.coconut.marshmallow.math.Vector;
-import com.coconut.marshmallow.object.GameObject;
+import com.coconut.marshmallow.object.FrameBuffer;
 import com.coconut.marshmallow.renderer.Renderer;
+import com.coconut.marshmallow.shader.Shader;
 import com.coconut.marshmallow.sprite.Sprite;
 import com.coconut.marshmallow.state.Scene;
 import com.coconut.marshmallow.state.SceneManager;
@@ -29,27 +28,37 @@ public class Main {
 
 class Workspace implements Scene {
 
-	private Sprite sprite = null;
 	private TTFont font = null;
 	private TTFont fontBig = null;
-	private GameObject obj = null;
+	private Shader testShader = new Shader("msResources/shader/test/testVertex.glsl",
+			"msResources/shader/test/testFragment.glsl");
+	private Shader blurShader = new Shader("msResources/shader/test/testVertex.glsl",
+			"msResources/shader/test/blur.glsl");
+
+	private Sprite dungeon = null;
+	private Sprite knight = null;
+	private Sprite torch = null;
+
+	private FrameBuffer frameBuffer = null;
 
 	@Override
 	public void init() {
-		sprite = new Sprite("msResources/img/aru.png");
+		dungeon = new Sprite("msResources/img/dungeon.png");
+		knight = new Sprite("msResources/img/knight.png");
+		torch = new Sprite("msResources/img/torch.png");
+		knight.cutImage(0, 0, 16, 16);
+
 		font = new TTFont("font/font.ttf", 64f);
 		fontBig = new TTFont("font/font.ttf", 64f * 2);
-		obj = new GameObject(0, 0, 100, 100);
-		obj.sprite = sprite;
+
+		frameBuffer = new FrameBuffer();
 	}
 
 	private boolean fs = false;
-	private Vector position = new Vector(0, 0);
+	private float timer = 0f;
 
 	@Override
 	public void update() {
-
-		obj.rotation += 0.01f;
 
 		if (Input.keys[KeyEvent.VK_W])
 			Camera.position.translate(0, 10f);
@@ -61,9 +70,9 @@ class Workspace implements Scene {
 			Camera.position.translate(10f, 0);
 
 		if (Input.keys[KeyEvent.VK_Q])
-			Camera.rotation -= 0.01f;
+			Camera.rotation -= 0.05f;
 		if (Input.keys[KeyEvent.VK_E])
-			Camera.rotation += 0.01f;
+			Camera.rotation += 0.05f;
 
 		if (Input.keys[KeyEvent.VK_F]) {
 			if (!fs)
@@ -77,14 +86,23 @@ class Workspace implements Scene {
 		Camera.position.translate(0, 0, Input.scrollYOffset * 0.05f);
 		Input.scrollYOffset = 0;
 
-		Vector wp = Mathf.screenToWorld(Input.mousePointer);
-		obj.position = wp;
+		timer += 0.02f;
 	}
 
 	@Override
 	public void render() {
-		obj.render();
-		Renderer.setColor(new Color(255, 100, 200));
-		Renderer.renderFont(font, "asdf", new Vector(100, 0, 0));
+//		Renderer.setColor(new Color(30, 30, 30));
+//		Renderer.renderUIRect(new Vector(0, 0, 0.5f), Display.width, Display.height);
+
+//		Renderer.renderImage(dungeon, new Vector(0, 0), 60 * 12, 60 * 12);
+
+//		Renderer.renderImage(torch, new Vector(0, 0), 60, 60);
+
+		frameBuffer.bind();
+		Renderer.renderImage(dungeon, new Vector(0, 0), 60 * 6, 60 * 6);
+		frameBuffer.unbind();
+
+		frameBuffer.render();
+
 	}
 }

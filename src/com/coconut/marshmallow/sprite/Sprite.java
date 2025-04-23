@@ -162,6 +162,21 @@ public class Sprite {
 	public Sprite() {
 	}
 
+	public Sprite(int texID) {
+
+		vertexArray = new float[] {
+				// position // color // UV Coordinates
+				0.5f, -0.5f, 0.0f, subXOffset + subWOffset, subYOffset + subHOffset, // Bottom
+				-0.5f, 0.5f, 0.0f, subXOffset, subYOffset, // Top left 1
+				0.5f, 0.5f, 0.0f, subXOffset + subWOffset, subYOffset, // Top right 2
+				-0.5f, -0.5f, 0.0f, subXOffset, subYOffset + subHOffset // Bottom left 3
+		};
+
+		initialize();
+		initializeGlSettings();
+		this.texID = texID;
+	}
+
 	protected void uploadAttribPointers() {
 		// Add the vertex attribute pointers
 		int positionsSize = 3;

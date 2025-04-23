@@ -25,19 +25,18 @@ import com.coconut.marshmallow.state.SceneManager;
 public class Display {
 
 	public static int width, height;
-	public static int normWidth, normHeight;
 	String title;
 
 	private long glfwWindow;
 
 	private Input input = new Input();
 
+	public static int frameBuffer = 0;
+
 	public Display(String title, int width, int height) {
 		this.title = title;
 		Display.width = width;
 		Display.height = height;
-		normWidth = width;
-		normHeight = height;
 
 		inintializeOpenGL();
 		init();
@@ -48,7 +47,6 @@ public class Display {
 	public void setFullScreen() {
 		long monitor = GLFW.glfwGetPrimaryMonitor();
 		GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
-		Camera.relZ *= (float) vidMode.width() / width;
 		Display.width = vidMode.width();
 		Display.height = vidMode.height();
 		GL20.glViewport(0, 0, width, height);
@@ -56,7 +54,6 @@ public class Display {
 	}
 
 	public void setWindowScreen(int width, int height) {
-		Camera.relZ *= (float) width / Display.width;
 		Display.width = width;
 		Display.height = height;
 		GL20.glViewport(0, 0, width, height);
@@ -131,11 +128,6 @@ public class Display {
 		GL30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		GL30.glClear(GL13.GL_COLOR_BUFFER_BIT | GL13.GL_DEPTH_BUFFER_BIT);
 
-		shader.bind();
-		shader.uploadMat4f("uProjection", Camera.getProjectionMatrix());
-		shader.uploadMat4f("uView", Camera.getViewMatrix());
-		shader.uploadTexture("TEX_SAMPLER", 0);
-
 		Scene scene = SceneManager.getScene();
 		objects.clear();
 
@@ -145,6 +137,13 @@ public class Display {
 		objects.sort(Comparator.comparingDouble(obj -> obj.position.getZ()));
 
 		for (int i = 0; i < objects.size(); i++) {
+			Display.uploadShader(objects.get(i).shader);
+			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, objects.get(i).getFrameBuffer());
+
+			shader.uploadMat4f("uProjection", Camera.getProjectionMatrix());
+			shader.uploadMat4f("uView", Camera.getViewMatrix());
+			shader.uploadTexture("TEX_SAMPLER", 0);
+
 			objects.get(i).MARSHMALLOW_RENDER();
 		}
 

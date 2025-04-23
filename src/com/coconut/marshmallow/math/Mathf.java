@@ -43,7 +43,7 @@ public class Mathf {
 	public static Vector screenToWorld(Vector screenPos) {
 		float x = (2.0f * screenPos.getX()) / Display.width;
 		float y = -(2.0f * screenPos.getY()) / -Display.height;
-		float z = screenPos.getZ() * 2.0f - 1;
+		float z = 0;
 
 		Vector4f ndc = new Vector4f(x, y, z, 1.0f);
 
@@ -53,6 +53,6 @@ public class Mathf {
 
 		world.div(world.w);
 
-		return new Vector(world.x, world.y, world.z);
+		return new Vector(world.x, world.y, screenPos.getZ());
 	}
 }

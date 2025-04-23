@@ -5,7 +5,6 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL30;
 
 import com.coconut.marshmallow.Display;
-import com.coconut.marshmallow.camera.Camera;
 import com.coconut.marshmallow.math.Vector;
 import com.coconut.marshmallow.shader.Shader;
 import com.coconut.marshmallow.shader.ShaderManager;
@@ -24,55 +23,65 @@ public class GameObject {
 	public Vector anchor = new Vector(0.5f, 0.5f);
 	public boolean flipX = false, flipY = false;
 
+	protected int frameBuffer = 0;
+
 	public GameObject(Vector position, float width, float height) {
 		this.position = position;
 		this.width = width;
 		this.height = height;
+		this.frameBuffer = Display.frameBuffer;
 	}
 
 	public GameObject(float x, float y, float width, float height) {
 		this.position = new Vector(x, y);
 		this.width = width;
 		this.height = height;
+		this.frameBuffer = Display.frameBuffer;
 	}
 
 	private Matrix4f modelMatrix;
 	private Vector3f glmAnchor;
 
 	public void render() {
+		this.frameBuffer = Display.frameBuffer;
 		this.shader = Display.getShader();
 		Display.objects.add(this);
 	}
 
+	public int getFrameBuffer() {
+		return frameBuffer;
+	}
+
 	public void update() {
+	}
+
+	protected Matrix4f makeModelMatrix() {
+		Matrix4f modelMatrix = new Matrix4f();
+		glmAnchor = new Vector3f(anchor.getX(), anchor.getY(), 0f);
+
+		modelMatrix.translate(new Vector3f(position.getX(), position.getY(), 0));
+
+		modelMatrix.translate(new Vector3f((glmAnchor.x - 0.5f) * width, (glmAnchor.y - 0.5f) * height, 0f));
+		modelMatrix.rotate(-this.rotation, new Vector3f(0.0f, 0.0f, 1.0f));
+		modelMatrix.translate(new Vector3f((glmAnchor.x - 0.5f) * -1 * width, (glmAnchor.y - 0.5f) * -1 * height, 0f));
+
+		modelMatrix.scale(width * (this.flipX ? -1 : 1), height * (this.flipY ? -1 : 1), 1);
+		return modelMatrix;
 	}
 
 	public void MARSHMALLOW_RENDER() {
 		if (sprite == null)
 			return;
 
-		if (Display.getShader() != shader)
-			Display.uploadShader(shader);
-
 		sprite.bind();
 
-		modelMatrix = new Matrix4f();
-		glmAnchor = new Vector3f(anchor.getX(), anchor.getY(), 0f);
-
-		modelMatrix.translate(new Vector3f(position.getX(), position.getY(), 0));
-
-		modelMatrix.translate(new Vector3f((glmAnchor.x - 0.5f) * width, (glmAnchor.y - 0.5f) * height, 0f));
-		modelMatrix.rotate(-this.rotation + Camera.rotation, new Vector3f(0.0f, 0.0f, 1.0f));
-		modelMatrix.translate(new Vector3f((glmAnchor.x - 0.5f) * -1 * width, (glmAnchor.y - 0.5f) * -1 * height, 0f));
-
-		modelMatrix.scale(width, height, 1);
+		modelMatrix = makeModelMatrix();
 
 		Display.getShader().uploadMat4f("uModel", modelMatrix);
 
 		GL30.glBindVertexArray(sprite.getVaoID());
 
 		GL30.glDrawElements(GL30.GL_TRIANGLES, sprite.getElementArray().length, GL30.GL_UNSIGNED_INT, 0);
-
 	}
 
 }
