@@ -3,6 +3,7 @@ package com.coconut.marshmallow.object;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import com.coconut.marshmallow.Display;
@@ -23,10 +24,12 @@ public class FrameBuffer extends GameObject {
 		fbo = GL30.glGenFramebuffers();
 
 		texture = GL30.glGenTextures();
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
 		GL30.glBindTexture(GL30.GL_TEXTURE_2D, texture);
 		GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL13.GL_RGBA, (int) Camera.getResolutionX(),
 				(int) Camera.getResolutionY(), 0, GL13.GL_RGBA, GL13.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-
+		GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
+		
 		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL30.GL_TEXTURE_2D, texture, 0);
 
 		sprite = new Sprite(texture);

@@ -138,15 +138,17 @@ public class Display {
 
 		for (int i = 0; i < objects.size(); i++) {
 			Display.uploadShader(objects.get(i).shader);
-			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, objects.get(i).getFrameBuffer());
+			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, objects.get(i).frameBuffer);
 
 			shader.uploadMat4f("uProjection", Camera.getProjectionMatrix());
+			
 			shader.uploadMat4f("uView", Camera.getViewMatrix());
 			shader.uploadTexture("TEX_SAMPLER", 0);
 
 			objects.get(i).MARSHMALLOW_RENDER();
 		}
-
+		
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 		GLFW.glfwSwapBuffers(glfwWindow);
 	}
 

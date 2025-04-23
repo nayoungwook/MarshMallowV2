@@ -10,6 +10,7 @@ import com.coconut.marshmallow.math.Vector;
 import com.coconut.marshmallow.object.FrameBuffer;
 import com.coconut.marshmallow.renderer.Renderer;
 import com.coconut.marshmallow.shader.Shader;
+import com.coconut.marshmallow.shader.ShaderManager;
 import com.coconut.marshmallow.sprite.Sprite;
 import com.coconut.marshmallow.state.Scene;
 import com.coconut.marshmallow.state.SceneManager;
@@ -94,11 +95,12 @@ class Workspace implements Scene {
 //		Renderer.setColor(new Color(30, 30, 30));
 //		Renderer.renderUIRect(new Vector(0, 0, 0.5f), Display.width, Display.height);
 
-//		Renderer.renderImage(dungeon, new Vector(0, 0), 60 * 12, 60 * 12);
 
-//		Renderer.renderImage(torch, new Vector(0, 0), 60, 60);
+		Display.uploadShader(ShaderManager.defaultShader);
+		Renderer.renderImage(dungeon, new Vector(0, 720 / 2), 60 * 12, 60 * 12);
 
 		frameBuffer.bind();
+//		Display.uploadShader(blurShader);
 		Renderer.renderImage(dungeon, new Vector(0, 0), 60 * 6, 60 * 6);
 		frameBuffer.unbind();
 

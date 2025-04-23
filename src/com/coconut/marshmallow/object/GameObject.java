@@ -23,20 +23,18 @@ public class GameObject {
 	public Vector anchor = new Vector(0.5f, 0.5f);
 	public boolean flipX = false, flipY = false;
 
-	protected int frameBuffer = 0;
+	public int frameBuffer = 0;
 
 	public GameObject(Vector position, float width, float height) {
 		this.position = position;
 		this.width = width;
 		this.height = height;
-		this.frameBuffer = Display.frameBuffer;
 	}
 
 	public GameObject(float x, float y, float width, float height) {
 		this.position = new Vector(x, y);
 		this.width = width;
 		this.height = height;
-		this.frameBuffer = Display.frameBuffer;
 	}
 
 	private Matrix4f modelMatrix;
@@ -46,10 +44,6 @@ public class GameObject {
 		this.frameBuffer = Display.frameBuffer;
 		this.shader = Display.getShader();
 		Display.objects.add(this);
-	}
-
-	public int getFrameBuffer() {
-		return frameBuffer;
 	}
 
 	public void update() {
@@ -78,7 +72,6 @@ public class GameObject {
 		modelMatrix = makeModelMatrix();
 
 		Display.getShader().uploadMat4f("uModel", modelMatrix);
-
 		GL30.glBindVertexArray(sprite.getVaoID());
 
 		GL30.glDrawElements(GL30.GL_TRIANGLES, sprite.getElementArray().length, GL30.GL_UNSIGNED_INT, 0);
