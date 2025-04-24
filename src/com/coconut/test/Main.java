@@ -1,6 +1,5 @@
 package com.coconut.test;
 
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import com.coconut.marshmallow.Display;
@@ -93,8 +92,8 @@ class Workspace implements Scene {
 
 	@Override
 	public void render() {
-		Renderer.setColor(new Color(30, 30, 30));
-		Renderer.renderUIRect(new Vector(0, 0, 0.5f), Display.width, Display.height);
+//		Renderer.setColor(new Color(30, 30, 30));
+//		Renderer.renderUIRect(new Vector(0, 0, 0.5f), Display.width, Display.height);
 
 		Display.uploadShader(ShaderManager.defaultShader);
 		Renderer.renderImage(dungeon, new Vector(0, 720 / 2), 60 * 12, 60 * 12);

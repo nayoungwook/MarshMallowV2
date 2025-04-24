@@ -25,7 +25,7 @@ public class Renderer {
 		GL30.glClearColor(1, 1, 1, 0);
 		GL30.glClear(GL13.GL_COLOR_BUFFER_BIT | GL13.GL_DEPTH_BUFFER_BIT);
 	}
-	
+
 	public static void renderRect(Vector position, float width, float height) {
 		RectRenderer rect = new RectRenderer(position, width, height, Renderer.color);
 		rect.frameBuffer = Display.frameBuffer;
@@ -78,9 +78,9 @@ public class Renderer {
 		GameObject object = new GameObject(0, 0, width, height);
 		object.shader = Display.getShader();
 		object.frameBuffer = Display.frameBuffer;
+		clearFrameBuffer(Display.frameBuffer);
 		object.position = position;
 		object.sprite = sprite;
-		clearFrameBuffer(Display.frameBuffer);
 		Display.objects.add(object);
 	}
 
@@ -91,6 +91,7 @@ public class Renderer {
 		GameObject object = new GameObject(0, 0, width, height);
 		object.shader = Display.getShader();
 		object.frameBuffer = Display.frameBuffer;
+		clearFrameBuffer(Display.frameBuffer);
 		object.position = position;
 		object.sprite = sprite;
 		object.rotation = rotation;
@@ -105,6 +106,7 @@ public class Renderer {
 		FontRenderer object = new FontRenderer(position, 100, 100, color, text, font);
 		object.shader = ShaderManager.defaultShader;
 		object.frameBuffer = Display.frameBuffer;
+		clearFrameBuffer(Display.frameBuffer);
 		object.text = text;
 		clearFrameBuffer(Display.frameBuffer);
 		Display.objects.add(object);
@@ -117,6 +119,7 @@ public class Renderer {
 		FontRenderer object = new FontRenderer(new Vector(0, 0), 100, 100, color, text, font);
 		object.shader = ShaderManager.defaultShader;
 		object.frameBuffer = Display.frameBuffer;
+		clearFrameBuffer(Display.frameBuffer);
 		object.align = align;
 		object.text = text;
 		object.position = position;

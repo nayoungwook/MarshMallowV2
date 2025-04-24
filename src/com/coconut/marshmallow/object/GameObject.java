@@ -43,6 +43,7 @@ public class GameObject {
 
 	public void render() {
 		this.frameBuffer = Display.frameBuffer;
+		Renderer.clearFrameBuffer(Display.frameBuffer);
 		this.shader = Display.getShader();
 		Renderer.clearFrameBuffer(Display.frameBuffer);
 		Display.objects.add(this);
