@@ -177,6 +177,15 @@ public class Sprite {
 		this.texID = texID;
 	}
 
+	// for frame buffer sprite.
+	public Sprite(int texID, float[] vertexArray) {
+		this.vertexArray = vertexArray;
+
+		initialize();
+		initializeGlSettings();
+		this.texID = texID;
+	}
+	
 	protected void uploadAttribPointers() {
 		// Add the vertex attribute pointers
 		int positionsSize = 3;

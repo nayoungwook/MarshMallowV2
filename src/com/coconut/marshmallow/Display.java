@@ -141,7 +141,6 @@ public class Display {
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, objects.get(i).frameBuffer);
 
 			shader.uploadMat4f("uProjection", Camera.getProjectionMatrix());
-			
 			shader.uploadMat4f("uView", Camera.getViewMatrix());
 			shader.uploadTexture("TEX_SAMPLER", 0);
 

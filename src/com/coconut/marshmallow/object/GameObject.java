@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL30;
 
 import com.coconut.marshmallow.Display;
 import com.coconut.marshmallow.math.Vector;
+import com.coconut.marshmallow.renderer.Renderer;
 import com.coconut.marshmallow.shader.Shader;
 import com.coconut.marshmallow.shader.ShaderManager;
 import com.coconut.marshmallow.sprite.Sprite;
@@ -37,12 +38,13 @@ public class GameObject {
 		this.height = height;
 	}
 
-	private Matrix4f modelMatrix;
+	protected Matrix4f modelMatrix;
 	private Vector3f glmAnchor;
 
 	public void render() {
 		this.frameBuffer = Display.frameBuffer;
 		this.shader = Display.getShader();
+		Renderer.clearFrameBuffer(Display.frameBuffer);
 		Display.objects.add(this);
 	}
 
