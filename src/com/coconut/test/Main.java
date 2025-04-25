@@ -2,18 +2,18 @@ package com.coconut.test;
 
 import java.awt.event.KeyEvent;
 
-import com.coconut.marshmallow.Display;
-import com.coconut.marshmallow.camera.Camera;
-import com.coconut.marshmallow.font.TTFont;
-import com.coconut.marshmallow.input.Input;
-import com.coconut.marshmallow.math.Vector;
-import com.coconut.marshmallow.object.FrameBuffer;
-import com.coconut.marshmallow.renderer.Renderer;
-import com.coconut.marshmallow.shader.Shader;
-import com.coconut.marshmallow.shader.ShaderManager;
-import com.coconut.marshmallow.sprite.Sprite;
-import com.coconut.marshmallow.state.Scene;
-import com.coconut.marshmallow.state.SceneManager;
+import com.coconut.toffee.Display;
+import com.coconut.toffee.camera.Camera;
+import com.coconut.toffee.font.TTFont;
+import com.coconut.toffee.input.Input;
+import com.coconut.toffee.math.Vector;
+import com.coconut.toffee.object.FrameBuffer;
+import com.coconut.toffee.renderer.Renderer;
+import com.coconut.toffee.shader.Shader;
+import com.coconut.toffee.shader.ShaderManager;
+import com.coconut.toffee.sprite.Sprite;
+import com.coconut.toffee.state.Scene;
+import com.coconut.toffee.state.SceneManager;
 
 public class Main {
 
@@ -31,10 +31,10 @@ class Workspace implements Scene {
 
 	private TTFont font = null;
 	private TTFont fontBig = null;
-	private Shader testShader = new Shader("msResources/shader/test/testVertex.glsl",
-			"msResources/shader/test/testFragment.glsl");
-	private Shader blurShader = new Shader("msResources/shader/test/testVertex.glsl",
-			"msResources/shader/test/blur.glsl");
+	private Shader testShader = new Shader("engineResources/shader/test/testVertex.glsl",
+			"engineResources/shader/test/testFragment.glsl");
+	private Shader blurShader = new Shader("engineResources/shader/test/testVertex.glsl",
+			"engineResources/shader/test/blur.glsl");
 
 	private Sprite dungeon = null;
 	private Sprite knight = null;
@@ -44,9 +44,9 @@ class Workspace implements Scene {
 
 	@Override
 	public void init() {
-		dungeon = new Sprite("msResources/img/dungeon.png");
-		knight = new Sprite("msResources/img/knight.png");
-		torch = new Sprite("msResources/img/torch.png");
+		dungeon = new Sprite("engineResources/img/dungeon.png");
+		knight = new Sprite("engineResources/img/knight.png");
+		torch = new Sprite("engineResources/img/torch.png");
 		knight.cutImage(0, 0, 16, 16);
 
 		font = new TTFont("font/font.ttf", 64f);
@@ -92,15 +92,14 @@ class Workspace implements Scene {
 
 	@Override
 	public void render() {
-//		Renderer.setColor(new Color(30, 30, 30));
-//		Renderer.renderUIRect(new Vector(0, 0, 0.5f), Display.width, Display.height);
-
-		Display.uploadShader(ShaderManager.defaultShader);
+		ShaderManager.defaultShader.bind();
 		Renderer.renderImage(dungeon, new Vector(0, 720 / 2), 60 * 12, 60 * 12);
 
 		frameBuffer.bind();
-		Display.uploadShader(blurShader);
+
+		blurShader.bind();
 		Renderer.renderImage(dungeon, new Vector(0, 0), 60 * 6, 60 * 6);
+
 		frameBuffer.unbind();
 
 		frameBuffer.render();
