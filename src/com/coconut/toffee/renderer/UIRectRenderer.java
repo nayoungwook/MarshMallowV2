@@ -2,6 +2,7 @@ package com.coconut.toffee.renderer;
 
 import java.awt.Color;
 
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL30;
 
@@ -27,7 +28,7 @@ public class UIRectRenderer extends RectRenderer {
 		ShaderManager.shapeShader.bind();
 
 		ShaderManager.getCurrentShader().uploadMat4f("uProjection", Camera.getProjectionMatrix());
-		ShaderManager.getCurrentShader().uploadMat4f("uView", Camera.getViewMatrix());
+		ShaderManager.getCurrentShader().uploadMat4f("uView", new Matrix4f().identity());
 		ShaderManager.getCurrentShader().uploadMat4f("uModel", modelMatrix);
 		ShaderManager.getCurrentShader().uploadVec4f("uColor", new Vector4f(r, g, b, a));
 

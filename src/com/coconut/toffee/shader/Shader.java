@@ -53,9 +53,9 @@ public class Shader {
 		if (ShaderManager.getCurrentShader() != this)
 			ShaderManager.getCurrentShader().unbind();
 
-		this.shaderProgramBackup = this.shaderProgram;
-		ShaderManager.__setCurrentShader__(this);
 		GL30.glUseProgram(shaderProgram);
+		ShaderManager.__setCurrentShader__(this);
+		this.shaderProgramBackup = this.shaderProgram;
 	}
 
 	public void unbind() {
@@ -135,6 +135,7 @@ public class Shader {
 		}
 		if (location == -1)
 			return;
+
 		GL20.glUniform2fv(location, floatArray);
 	}
 
@@ -165,6 +166,23 @@ public class Shader {
 		if (location == -1)
 			return;
 		GL20.glUniform3fv(location, floatArray);
+	}
+
+	public void uploadFloatv(String varName, float[] v) {
+		if (shaderProgramBackup != shaderProgram)
+			bind();
+
+		int location = 0;
+		if (uniformLocations.containsKey(varName))
+			location = uniformLocations.get(varName);
+		else {
+			location = GL30.glGetUniformLocation(shaderProgram, varName);
+			uniformLocations.put(varName, location);
+		}
+
+		if (location == -1)
+			return;
+		GL20.glUniform1fv(location, v);
 	}
 
 	public void uploadMat3f(String varName, Matrix3f mat3) {
@@ -247,6 +265,7 @@ public class Shader {
 	public void uploadInt(String varName, int val) {
 		if (shaderProgramBackup != shaderProgram)
 			bind();
+
 		int varLocation = 0;
 		if (uniformLocations.containsKey(varName))
 			varLocation = uniformLocations.get(varName);
@@ -256,6 +275,7 @@ public class Shader {
 		}
 		if (varLocation == -1)
 			return;
+
 		GL30.glUniform1i(varLocation, val);
 	}
 

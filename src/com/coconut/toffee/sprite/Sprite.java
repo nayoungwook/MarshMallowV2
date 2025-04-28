@@ -223,10 +223,12 @@ public class Sprite {
 	}
 
 	public void bind() {
+		GL30.glActiveTexture(GL30.GL_TEXTURE0);
 		GL30.glBindTexture(GL30.GL_TEXTURE_2D, texID);
 	}
 
 	public void unbind() {
+		GL30.glActiveTexture(GL30.GL_TEXTURE0);
 		GL30.glBindTexture(GL30.GL_TEXTURE_2D, 0);
 	}
 

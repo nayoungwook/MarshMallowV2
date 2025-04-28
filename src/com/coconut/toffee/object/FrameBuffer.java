@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL30;
 
 import com.coconut.toffee.Display;
 import com.coconut.toffee.camera.Camera;
+import com.coconut.toffee.renderer.Renderer;
 import com.coconut.toffee.shader.Shader;
 import com.coconut.toffee.shader.ShaderManager;
 import com.coconut.toffee.sprite.Sprite;
@@ -43,9 +44,16 @@ public class FrameBuffer extends GameObject {
 	}
 
 	private int backupW = 0, backupH = 0;
+	private int glTexture = GL30.GL_TEXTURE0;
+
+	public void uploadGlTexture(int glTexture) {
+		updateFramebufferTexture();
+		this.glTexture = glTexture;
+		GL30.glActiveTexture(glTexture);
+		GL30.glBindTexture(GL30.GL_TEXTURE_2D, texture);
+	}
 
 	public void updateFramebufferTexture() {
-
 		if (backupW == Display.width && backupH == Display.height)
 			return;
 
@@ -54,6 +62,7 @@ public class FrameBuffer extends GameObject {
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
 
+		GL30.glActiveTexture(GL30.GL_TEXTURE0);
 		GL30.glBindTexture(GL30.GL_TEXTURE_2D, texture);
 		GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL13.GL_RGBA, Display.width, Display.height, 0, GL13.GL_RGBA,
 				GL13.GL_UNSIGNED_BYTE, (ByteBuffer) null);
@@ -67,8 +76,10 @@ public class FrameBuffer extends GameObject {
 			return;
 
 		this.updateFramebufferTexture();
-		sprite.bind();
-		
+
+		GL30.glActiveTexture(glTexture);
+		GL30.glBindTexture(GL30.GL_TEXTURE, texture);
+
 		Shader shaderBackup = ShaderManager.getCurrentShader();
 		shaderBackup.unbind();
 		ShaderManager.frameBufferShader.bind();
@@ -81,6 +92,7 @@ public class FrameBuffer extends GameObject {
 
 	public void bind() {
 		Display.frameBuffer = fbo;
+		Renderer.clearFrameBuffer(Display.frameBuffer);
 	}
 
 	public void unbind() {

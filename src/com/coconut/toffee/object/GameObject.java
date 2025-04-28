@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL30;
 
 import com.coconut.toffee.Display;
 import com.coconut.toffee.math.Vector;
-import com.coconut.toffee.renderer.Renderer;
 import com.coconut.toffee.shader.Shader;
 import com.coconut.toffee.shader.ShaderManager;
 import com.coconut.toffee.sprite.Sprite;
@@ -44,7 +43,6 @@ public class GameObject {
 	public void render() {
 		this.frameBuffer = Display.frameBuffer;
 		this.shader = ShaderManager.getCurrentShader();
-		Renderer.clearFrameBuffer(Display.frameBuffer);
 		Display.objects.add(this);
 	}
 

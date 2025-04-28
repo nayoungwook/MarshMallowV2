@@ -1,5 +1,6 @@
 package com.coconut.test;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import com.coconut.toffee.Display;
@@ -7,10 +8,8 @@ import com.coconut.toffee.camera.Camera;
 import com.coconut.toffee.font.TTFont;
 import com.coconut.toffee.input.Input;
 import com.coconut.toffee.math.Vector;
-import com.coconut.toffee.object.FrameBuffer;
 import com.coconut.toffee.renderer.Renderer;
 import com.coconut.toffee.shader.Shader;
-import com.coconut.toffee.shader.ShaderManager;
 import com.coconut.toffee.sprite.Sprite;
 import com.coconut.toffee.state.Scene;
 import com.coconut.toffee.state.SceneManager;
@@ -33,26 +32,28 @@ class Workspace implements Scene {
 	private TTFont fontBig = null;
 	private Shader testShader = new Shader("engineResources/shader/test/testVertex.glsl",
 			"engineResources/shader/test/testFragment.glsl");
-	private Shader blurShader = new Shader("engineResources/shader/test/testVertex.glsl",
-			"engineResources/shader/test/blur.glsl");
 
 	private Sprite dungeon = null;
 	private Sprite knight = null;
 	private Sprite torch = null;
+	private Sprite dark = null;
 
-	private FrameBuffer frameBuffer = null;
+	private LightFrameBuffer lightFrameBuffer = null;
+	private GameFrameBuffer gameFrameBuffer = null;
 
 	@Override
 	public void init() {
 		dungeon = new Sprite("engineResources/img/dungeon.png");
 		knight = new Sprite("engineResources/img/knight.png");
 		torch = new Sprite("engineResources/img/torch.png");
+		dark = new Sprite("engineResources/img/dark.png");
 		knight.cutImage(0, 0, 16, 16);
 
-		font = new TTFont("font/font.ttf", 64f);
-		fontBig = new TTFont("font/font.ttf", 64f * 2);
+		font = new TTFont("font/font.ttf", 32f);
+		fontBig = new TTFont("font/font.ttf", 32f * 2);
 
-		frameBuffer = new FrameBuffer();
+		gameFrameBuffer = new GameFrameBuffer();
+		lightFrameBuffer = new LightFrameBuffer();
 	}
 
 	private boolean fs = false;
@@ -92,17 +93,22 @@ class Workspace implements Scene {
 
 	@Override
 	public void render() {
-		ShaderManager.defaultShader.bind();
-		Renderer.renderImage(dungeon, new Vector(0, 720 / 2), 60 * 12, 60 * 12);
+//		testShader.bind();
+//		testShader.uploadVec2f("uDisplaySize", new Vector2f(Display.width, Display.height));
+//		testShader.uploadTexture("uGameTex", 1);
 
-		frameBuffer.bind();
+		Renderer.renderImage(dungeon, new Vector(0, 0), 600, 600);
 
-		blurShader.bind();
-		Renderer.renderImage(dungeon, new Vector(0, 0), 60 * 6, 60 * 6);
+		Renderer.setColor(new Color(20, 20, 20));
+		Renderer.renderUIRect(new Vector(0, 0, 0), Camera.getResolutionX(), Camera.getResolutionY());
 
-		frameBuffer.unbind();
+		gameFrameBuffer.bind();
+		Renderer.setColor(new Color(255, 255, 245));
+		Renderer.renderRect(new Vector(0, 0), 100, 100);
+		gameFrameBuffer.unbind();
 
-		frameBuffer.render();
+		gameFrameBuffer.render();
 
+//		gameFrameBuffer.uploadGlTexture(GL30.GL_TEXTURE1);
 	}
 }
