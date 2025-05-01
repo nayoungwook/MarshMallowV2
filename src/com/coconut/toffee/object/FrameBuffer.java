@@ -2,6 +2,7 @@ package com.coconut.toffee.object;
 
 import java.nio.ByteBuffer;
 
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -9,8 +10,6 @@ import org.lwjgl.opengl.GL30;
 import com.coconut.toffee.Display;
 import com.coconut.toffee.camera.Camera;
 import com.coconut.toffee.renderer.Renderer;
-import com.coconut.toffee.shader.Shader;
-import com.coconut.toffee.shader.ShaderManager;
 import com.coconut.toffee.sprite.Sprite;
 
 public class FrameBuffer extends GameObject {
@@ -21,6 +20,7 @@ public class FrameBuffer extends GameObject {
 	public FrameBuffer() {
 		super(0, 0, Camera.getResolutionX(), Camera.getResolutionY());
 		initialize();
+		this.position.setZ(100);
 	}
 
 	private void initialize() {
@@ -35,10 +35,10 @@ public class FrameBuffer extends GameObject {
 
 		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL30.GL_TEXTURE_2D, texture, 0);
 
-		float[] vertexArray = new float[] { 1f, 1f, 0.0f, 1, 0 + 1, // Bottom
-				-1f, -1f, 0.0f, 0, 0, // Top left 1
-				1f, -1f, 0.0f, 1, 0, // Top right 2
-				-1f, 1f, 0.0f, 0, 1// Bottom left 3
+		float[] vertexArray = new float[] { 0.5f, 0.5f, 0.0f, 1, 0 + 1, // Bottom
+				-0.5f, -0.5f, 0.0f, 0, 0, // Top left 1
+				0.5f, -0.5f, 0.0f, 1, 0, // Top right 2
+				-0.5f, 0.5f, 0.0f, 0, 1// Bottom left 3
 		};
 		sprite = new Sprite(texture, vertexArray);
 	}
@@ -77,17 +77,17 @@ public class FrameBuffer extends GameObject {
 
 		this.updateFramebufferTexture();
 
-		GL30.glActiveTexture(glTexture);
-		GL30.glBindTexture(GL30.GL_TEXTURE, texture);
+		this.sprite.bind();
 
-		Shader shaderBackup = ShaderManager.getCurrentShader();
-		shaderBackup.unbind();
-		ShaderManager.frameBufferShader.bind();
+		modelMatrix = makeModelMatrix();
+
+		shader.uploadMat4f("uProjection", Camera.getProjectionMatrix());
+		shader.uploadMat4f("uView", new Matrix4f().identity());
+		shader.uploadMat4f("uModel", modelMatrix);
 
 		GL30.glBindVertexArray(sprite.getVaoID());
 
 		GL30.glDrawElements(GL30.GL_TRIANGLES, sprite.getElementArray().length, GL30.GL_UNSIGNED_INT, 0);
-		shaderBackup.bind();
 	}
 
 	public void bind() {

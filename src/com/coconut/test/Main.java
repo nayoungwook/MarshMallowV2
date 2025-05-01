@@ -32,6 +32,8 @@ class Workspace implements Scene {
 	private TTFont fontBig = null;
 	private Shader testShader = new Shader("engineResources/shader/test/testVertex.glsl",
 			"engineResources/shader/test/testFragment.glsl");
+	private Shader blurShader = new Shader("engineResources/shader/test/testVertex.glsl",
+			"engineResources/shader/test/blur.glsl");
 
 	private Sprite dungeon = null;
 	private Sprite knight = null;
@@ -93,22 +95,16 @@ class Workspace implements Scene {
 
 	@Override
 	public void render() {
-//		testShader.bind();
-//		testShader.uploadVec2f("uDisplaySize", new Vector2f(Display.width, Display.height));
-//		testShader.uploadTexture("uGameTex", 1);
-
-		Renderer.renderImage(dungeon, new Vector(0, 0), 600, 600);
-
-		Renderer.setColor(new Color(20, 20, 20));
-		Renderer.renderUIRect(new Vector(0, 0, 0), Camera.getResolutionX(), Camera.getResolutionY());
 
 		gameFrameBuffer.bind();
-		Renderer.setColor(new Color(255, 255, 245));
-		Renderer.renderRect(new Vector(0, 0), 100, 100);
+		Renderer.renderImage(dungeon, new Vector(-100, 0, 10), 600, 600);
+		Renderer.renderImage(dungeon, new Vector(200, 100), 600, 600);
+		Renderer.renderImage(dungeon, new Vector(100, 0, 3), 300, 600);
+		Renderer.setColor(new Color(0, 0, 0, 250));
+		Renderer.renderRect(new Vector(0, 0, 10), 200, 200);
 		gameFrameBuffer.unbind();
 
 		gameFrameBuffer.render();
 
-//		gameFrameBuffer.uploadGlTexture(GL30.GL_TEXTURE1);
 	}
 }
