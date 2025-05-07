@@ -10,6 +10,7 @@ import com.coconut.toffee.input.Input;
 import com.coconut.toffee.math.Vector;
 import com.coconut.toffee.renderer.Renderer;
 import com.coconut.toffee.shader.Shader;
+import com.coconut.toffee.shader.ShaderManager;
 import com.coconut.toffee.sprite.Sprite;
 import com.coconut.toffee.state.Scene;
 import com.coconut.toffee.state.SceneManager;
@@ -97,14 +98,21 @@ class Workspace implements Scene {
 	public void render() {
 
 		gameFrameBuffer.bind();
-		Renderer.renderImage(dungeon, new Vector(-100, 0, 10), 600, 600);
-		Renderer.renderImage(dungeon, new Vector(200, 100), 600, 600);
-		Renderer.renderImage(dungeon, new Vector(100, 0, 3), 300, 600);
-		Renderer.setColor(new Color(0, 0, 0, 250));
-		Renderer.renderRect(new Vector(0, 0, 10), 200, 200);
+		testShader.bind();
+		Renderer.setColor(new Color(20, 20, 20));
+		Renderer.renderUIRect(new Vector(0, 0), Display.width, Display.height);
+		Renderer.renderImage(knight, new Vector(-100, 0, 10), 600, 600);
+		Renderer.renderImage(knight, new Vector(200, 100), 600, 600);
+		Renderer.renderImage(knight, new Vector(100, 0, 3), 300, 600);
+		Renderer.setColor(new Color(0, 0, 0, 50));
+		Renderer.renderRect(new Vector(100, 0, 20), 200, 200);
 		gameFrameBuffer.unbind();
 
+		ShaderManager.defaultShader.bind();
 		gameFrameBuffer.render();
 
+		lightFrameBuffer.bind();
+		lightFrameBuffer.unbind();
+		lightFrameBuffer.render();
 	}
 }

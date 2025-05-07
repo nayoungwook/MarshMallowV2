@@ -21,8 +21,9 @@ vec4 applyLight(vec4 tex, vec3 light, float range) {
 
 void main() {
 	vec2 uv = fTexCoords;
-	uv *= uv.x;
+//	uv *= uv.x;
 	vec4 tex = texture(TEX_SAMPLER, uv);
 //	color = applyLight(tex, vec3(0.6, 0.6, 0.6), 2);
+	tex *= vec4(0.5, 0.2, 0.5, 1);
 	color = tex;
 }

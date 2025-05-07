@@ -92,7 +92,7 @@ public class Display {
 		GL30.glEnableVertexAttribArray(1);
 
 		GL13.glEnable(GL13.GL_BLEND);
-		GL30.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+		GL30.glBlendFunc(GL30.GL_ONE, GL30.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	public void init() {

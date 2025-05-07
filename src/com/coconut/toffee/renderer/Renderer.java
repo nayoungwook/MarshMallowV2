@@ -22,7 +22,7 @@ public class Renderer {
 
 	public static void clearFrameBuffer(int frameBuffer) {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
-		GL30.glClearColor(1, 1, 1, 0);
+		GL30.glClearColor(0, 0, 0, 0);
 		GL30.glClear(GL13.GL_COLOR_BUFFER_BIT | GL13.GL_DEPTH_BUFFER_BIT);
 	}
 
